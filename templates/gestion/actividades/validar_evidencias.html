@@ -1,0 +1,227 @@
+
+{% extends "base.html" %}
+
+{% block title %}Validación de Evidencias | SGR La Serena{% endblock %}
+{% block breadcrumb %}GESTIÓN / VALIDACIÓN DE EVIDENCIAS{% endblock %}
+
+{% block content %}
+
+<div class="module-heading">
+    <div>
+        <h2>Validación de evidencias</h2>
+        <p>
+            Revisión de actividades y evidencias
+            por parte del personal verificador.
+        </p>
+    </div>
+
+    <a href="{% url 'gestion:listar_actividades' %}"
+       class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i>
+        Volver a actividades
+    </a>
+</div>
+
+<div class="panel-card mb-4">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div>
+            <h5 class="fw-bold mb-1">
+                Actividad seleccionada
+            </h5>
+            <p class="text-muted mb-0">
+                Información ficticia para demostrar
+                el flujo de verificación.
+            </p>
+        </div>
+
+        <span class="badge bg-secondary">
+            Datos de demostración
+        </span>
+    </div>
+
+    <hr>
+
+    <div class="row g-4">
+        <div class="col-md-6">
+            <p class="text-muted small mb-1">Código de actividad</p>
+            <strong>SGR-DEMO-003</strong>
+        </div>
+
+        <div class="col-md-6">
+            <p class="text-muted small mb-1">Fecha</p>
+            <strong>14/10/2026</strong>
+        </div>
+
+        <div class="col-md-6">
+            <p class="text-muted small mb-1">Actividad</p>
+            <strong>Inspección territorial comunitaria</strong>
+        </div>
+
+        <div class="col-md-6">
+            <p class="text-muted small mb-1">Funcionario responsable</p>
+            <strong>Funcionario C</strong>
+        </div>
+
+        <div class="col-md-6">
+            <p class="text-muted small mb-1">Delegación</p>
+            <strong>Sector Sur</strong>
+        </div>
+
+        <div class="col-md-6">
+            <p class="text-muted small mb-1">Estado de evidencia</p>
+            <span class="badge bg-primary" id="estadoEvidencia">
+                En revisión
+            </span>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+
+    <!-- EVIDENCIA -->
+
+    <div class="col-lg-7">
+        <div class="panel-card h-100">
+
+            <h5 class="fw-bold mb-3">
+                <i class="bi bi-file-earmark-image me-2"></i>
+                Evidencia adjunta
+            </h5>
+
+            <div class="border rounded-3 p-5 text-center bg-light">
+                <i class="bi bi-image text-secondary"
+                   style="font-size: 64px;"></i>
+
+                <h6 class="mt-3 mb-2">
+                    Vista previa de evidencia
+                </h6>
+
+                <p class="text-muted small mb-0">
+                    Archivo ilustrativo no disponible.
+                    La carga real de evidencias
+                    corresponde a una etapa posterior.
+                </p>
+            </div>
+
+            <div class="mt-3">
+                <p class="mb-1">
+                    <strong>Descripción de la evidencia</strong>
+                </p>
+                <p class="text-muted">
+                    Registro de inspección territorial
+                    realizada en un sector comunitario.
+                </p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- PANEL DE REVISIÓN -->
+
+    <div class="col-lg-5">
+        <div class="panel-card h-100">
+
+            <h5 class="fw-bold mb-3">
+                <i class="bi bi-shield-check me-2"></i>
+                Revisión del verificador
+            </h5>
+
+            <div class="mb-3">
+                <label for="observaciones"
+                       class="form-label fw-semibold">
+                    Observaciones
+                </label>
+
+                <textarea
+                    id="observaciones"
+                    class="form-control"
+                    rows="5"
+                    placeholder="Escriba sus observaciones sobre la evidencia..."
+                ></textarea>
+            </div>
+
+            <p class="small text-muted">
+                Los controles siguientes muestran
+                una simulación visual.
+                No modifican registros en MySQL.
+            </p>
+
+            <div class="d-grid gap-2">
+
+                <button
+                    type="button"
+                    class="btn btn-success"
+                    id="btnAprobar"
+                >
+                    <i class="bi bi-check-circle me-1"></i>
+                    Aprobar evidencia
+                </button>
+
+                <button
+                    type="button"
+                    class="btn btn-outline-danger"
+                    id="btnRechazar"
+                >
+                    <i class="bi bi-x-circle me-1"></i>
+                    Rechazar evidencia
+                </button>
+
+            </div>
+
+            <div
+                id="resultadoRevision"
+                class="mt-3"
+                aria-live="polite"
+            ></div>
+
+        </div>
+    </div>
+
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const estado = document.getElementById("estadoEvidencia");
+    const observaciones = document.getElementById("observaciones");
+    const resultado = document.getElementById("resultadoRevision");
+    const aprobar = document.getElementById("btnAprobar");
+    const rechazar = document.getElementById("btnRechazar");
+
+    function mostrarResultado(mensaje, tipo, textoEstado) {
+        estado.textContent = textoEstado;
+        estado.className = "badge " + (
+            tipo === "success" ? "bg-success" : "bg-danger"
+        );
+
+        resultado.textContent = mensaje;
+        resultado.className =
+            "alert alert-" + tipo + " mt-3";
+    }
+
+    aprobar.addEventListener("click", function () {
+        mostrarResultado(
+            "Demostración: evidencia aprobada visualmente. No se guardaron cambios.",
+            "success",
+            "Aprobada (demo)"
+        );
+    });
+
+    rechazar.addEventListener("click", function () {
+        if (!observaciones.value.trim()) {
+            resultado.textContent =
+                "Ingrese una observación antes de rechazar la evidencia.";
+            resultado.className = "alert alert-warning mt-3";
+            observaciones.focus();
+            return;
+        }
+
+        mostrarResultado(
+            "Demostración: evidencia rechazada visualmente. No se guardaron cambios.",
+            "danger",
+            "Rechazada (demo)"
+        );
+    });
+});
+</script>
+
+{% endblock %}

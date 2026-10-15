@@ -1,0 +1,286 @@
+{% extends "base.html" %}
+
+{% block title %}Panel principal | SGR La Serena{% endblock %}
+{% block breadcrumb %}PANEL PRINCIPAL{% endblock %}
+
+{% block content %}
+<!-- Encabezado -->
+<div class="dashboard-header mb-4">
+    <div>
+        <h2 class="dashboard-title">
+            Bienvenido, {% if request.user.first_name %}{{ request.user.first_name }}{% else %}{{ request.user.username }}{% endif %}
+        </h2>
+        <p class="dashboard-subtitle">
+            Sistema de Gestión de Resultados de las Delegaciones Municipales de La Serena.
+        </p>
+    </div>
+    <div class="date-card">
+        <div class="date-row">
+            <i class="bi bi-calendar3" aria-hidden="true"></i>
+            <span id="fecha-sgr">--/--/----</span>
+        </div>
+        <div class="date-row">
+            <i class="bi bi-clock" aria-hidden="true"></i>
+            <span id="reloj-sgr">--:-- hrs</span>
+        </div>
+    </div>
+</div>
+
+<!-- Resumen de tablas maestras -->
+<div class="row g-4 mb-4">
+    <div class="col-md-6 col-xl-4">
+        <div class="metric-card metric-red">
+            <div class="metric-icon"><i class="bi bi-bank" aria-hidden="true"></i></div>
+            <div class="metric-info">
+                <h6>Delegaciones</h6>
+                <h3>{{ total_delegaciones }}</h3>
+                <p>Registradas</p>
+            </div>
+            {% if request.user.is_superuser or request.user.rol == 'ADMIN' %}
+            <a href="{% url 'delegaciones:listar' %}" class="metric-arrow" aria-label="Administrar delegaciones">
+                <i class="bi bi-chevron-right" aria-hidden="true"></i>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-4">
+        <div class="metric-card metric-blue">
+            <div class="metric-icon"><i class="bi bi-people-fill" aria-hidden="true"></i></div>
+            <div class="metric-info">
+                <h6>Funcionarios</h6>
+                <h3>{{ total_funcionarios }}</h3>
+                <p>Registrados</p>
+            </div>
+            {% if request.user.is_superuser or request.user.rol == 'ADMIN' %}
+            <a href="{% url 'funcionarios:listar' %}" class="metric-arrow" aria-label="Administrar funcionarios">
+                <i class="bi bi-chevron-right" aria-hidden="true"></i>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-4">
+        <div class="metric-card metric-green">
+            <div class="metric-icon"><i class="bi bi-briefcase-fill" aria-hidden="true"></i></div>
+            <div class="metric-info">
+                <h6>Cargos</h6>
+                <h3>{{ total_cargos }}</h3>
+                <p>Registrados</p>
+            </div>
+            {% if request.user.is_superuser or request.user.rol == 'ADMIN' %}
+            <a href="{% url 'catalogos:listar_cargos' %}" class="metric-arrow" aria-label="Administrar cargos">
+                <i class="bi bi-chevron-right" aria-hidden="true"></i>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Gestión municipal y estado de los módulos -->
+<div class="row g-4 mb-4">
+    <div class="col-lg-6">
+        <div class="panel-card h-100">
+            <div class="panel-card-header">
+                <div>
+                    <h5><i class="bi bi-buildings me-2" aria-hidden="true"></i>Gestión de delegaciones</h5>
+                    <p>Administración de las delegaciones municipales de La Serena.</p>
+                </div>
+            </div>
+            <div class="text-center py-4">
+                <div class="mb-3">
+                    <i class="bi bi-bank" style="font-size: 48px; color: #a32035;" aria-hidden="true"></i>
+                </div>
+                <h3 class="fw-bold">{{ total_delegaciones }}</h3>
+                <p class="text-muted">Delegaciones registradas en el sistema</p>
+                {% if request.user.is_superuser or request.user.rol == 'ADMIN' %}
+                <a href="{% url 'delegaciones:listar' %}" class="btn-muni">
+                    <i class="bi bi-arrow-right-circle" aria-hidden="true"></i> Administrar delegaciones
+                </a>
+                {% else %}
+                <p class="text-muted small">La administración está disponible para usuarios autorizados.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="panel-card h-100">
+            <div class="panel-card-header">
+                <div>
+                    <h5><i class="bi bi-graph-up-arrow me-2" aria-hidden="true"></i>Resumen de gestión municipal</h5>
+                    <p>Vista ilustrativa de la gestión operativa del SGR.</p>
+                </div>
+            </div>
+
+            <!-- Valores ficticios: no corresponden a consultas de MySQL -->
+            <div class="row g-3 p-2">
+                <div class="col-sm-6">
+                    <div class="border rounded-4 p-3 h-100">
+                        <i class="bi bi-journal-text fs-3 text-primary" aria-hidden="true"></i>
+                        <div class="fs-2 fw-bold mt-2">3</div>
+                        <div class="text-muted small">Actividades de ejemplo</div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="border rounded-4 p-3 h-100">
+                        <i class="bi bi-calendar-check fs-3 text-success" aria-hidden="true"></i>
+                        <div class="fs-2 fw-bold mt-2">4</div>
+                        <div class="text-muted small">Compromisos de ejemplo</div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="border rounded-4 p-3 h-100">
+                        <i class="bi bi-bullseye fs-3 text-primary" aria-hidden="true"></i>
+                        <div class="fs-2 fw-bold mt-2">3</div>
+                        <div class="text-muted small">Indicadores de ejemplo</div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="border rounded-4 p-3 h-100">
+                        <i class="bi bi-bar-chart-line fs-3 text-warning" aria-hidden="true"></i>
+                        <div class="fs-2 fw-bold mt-2">70%</div>
+                        <div class="text-muted small">Cumplimiento ilustrativo</div>
+                    </div>
+                </div>
+            </div>
+            <p class="small text-muted mt-3 mb-0 px-2 pb-2">
+                <i class="bi bi-info-circle me-1" aria-hidden="true"></i>
+                Datos ficticios para presentación del diseño. No se obtienen de MySQL.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Accesos rápidos -->
+<div class="panel-card">
+    <div class="panel-card-header">
+        <div>
+            <h5><i class="bi bi-grid me-2" aria-hidden="true"></i>Accesos rápidos</h5>
+            <p>Principales módulos del Sistema de Gestión de Resultados.</p>
+        </div>
+    </div>
+    <div class="quick-grid">
+        {% if request.user.is_superuser or request.user.rol == 'ADMIN' %}
+        <a href="{% url 'delegaciones:listar' %}" class="quick-card">
+            <div class="quick-left">
+                <div class="quick-icon blue"><i class="bi bi-bank" aria-hidden="true"></i></div>
+                <div><strong>Delegaciones</strong><span>Administrar delegaciones</span></div>
+            </div>
+            <i class="bi bi-chevron-right" aria-hidden="true"></i>
+        </a>
+        <a href="{% url 'funcionarios:listar' %}" class="quick-card">
+            <div class="quick-left">
+                <div class="quick-icon sky"><i class="bi bi-people-fill" aria-hidden="true"></i></div>
+                <div><strong>Funcionarios</strong><span>Administrar personal municipal</span></div>
+            </div>
+            <i class="bi bi-chevron-right" aria-hidden="true"></i>
+        </a>
+        <a href="{% url 'catalogos:listar_cargos' %}" class="quick-card">
+            <div class="quick-left">
+                <div class="quick-icon red"><i class="bi bi-briefcase-fill" aria-hidden="true"></i></div>
+                <div><strong>Cargos</strong><span>Administrar cargos municipales</span></div>
+            </div>
+            <i class="bi bi-chevron-right" aria-hidden="true"></i>
+        </a>
+        <a href="{% url 'catalogos:listar_funciones' %}" class="quick-card">
+            <div class="quick-left">
+                <div class="quick-icon red"><i class="bi bi-list-check" aria-hidden="true"></i></div>
+                <div><strong>Funciones</strong><span>Funciones por cargo</span></div>
+            </div>
+            <i class="bi bi-chevron-right" aria-hidden="true"></i>
+        </a>
+        <a href="{% url 'gestion:listar_periodos' %}" class="quick-card">
+            <div class="quick-left">
+                <div class="quick-icon violet"><i class="bi bi-calendar-range" aria-hidden="true"></i></div>
+                <div><strong>Períodos</strong><span>Períodos de medición</span></div>
+            </div>
+            <i class="bi bi-chevron-right" aria-hidden="true"></i>
+        </a>
+        {% endif %}
+        {% if request.user.is_superuser %}
+        <a href="{% url 'usuarios:listar' %}" class="quick-card">
+            <div class="quick-left">
+                <div class="quick-icon blue"><i class="bi bi-person-gear" aria-hidden="true"></i></div>
+                <div><strong>Usuarios</strong><span>Administrar cuentas y roles</span></div>
+            </div>
+            <i class="bi bi-chevron-right" aria-hidden="true"></i>
+        </a>
+        {% endif %}
+        <!-- Accesos a pantallas demostrativas -->
+        <a href="{% url 'gestion:listar_actividades' %}" class="quick-card">
+            <div class="quick-left">
+                <div class="quick-icon purple"><i class="bi bi-journal-text" aria-hidden="true"></i></div>
+                <div><strong>Actividades</strong><span>Consulta y registro demostrativo</span></div>
+            </div>
+            <i class="bi bi-chevron-right" aria-hidden="true"></i>
+        </a>
+        <a href="{% url 'gestion:agenda_colectiva' %}" class="quick-card">
+            <div class="quick-left">
+                <div class="quick-icon violet"><i class="bi bi-calendar-event" aria-hidden="true"></i></div>
+                <div><strong>Agenda colectiva</strong><span>Compromisos de demostración</span></div>
+            </div>
+            <i class="bi bi-chevron-right" aria-hidden="true"></i>
+        </a>
+        <a href="{% url 'gestion:indicadores' %}" class="quick-card">
+            <div class="quick-left">
+                <div class="quick-icon rose"><i class="bi bi-bar-chart-fill" aria-hidden="true"></i></div>
+                <div><strong>Indicadores</strong><span>Metas y cumplimiento demostrativo</span></div>
+            </div>
+            <i class="bi bi-chevron-right" aria-hidden="true"></i>
+        </a>
+        <a href="{% url 'gestion:informes_gestion' %}" class="quick-card">
+            <div class="quick-left">
+                <div class="quick-icon blue"><i class="bi bi-file-earmark-bar-graph" aria-hidden="true"></i></div>
+                <div><strong>Informes</strong><span>Consulta demostrativa de resultados</span></div>
+            </div>
+            <i class="bi bi-chevron-right" aria-hidden="true"></i>
+        </a>
+    </div>
+</div>
+
+
+
+
+<script>
+(function () {
+    const reloj = document.getElementById("reloj-sgr");
+    const fecha = document.getElementById("fecha-sgr");
+
+    const zonaHoraria = "America/Santiago";
+
+    function actualizarFechaHora() {
+        const ahora = new Date();
+
+        const horaActual = new Intl.DateTimeFormat("es-CL", {
+            timeZone: zonaHoraria,
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false
+        }).format(ahora);
+
+        const fechaActual = new Intl.DateTimeFormat("es-CL", {
+            timeZone: zonaHoraria,
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric"
+        }).format(ahora);
+
+        if (reloj) {
+            reloj.textContent = horaActual + " hrs";
+        }
+
+        if (fecha) {
+            fecha.textContent = fechaActual;
+        }
+    }
+
+    actualizarFechaHora();
+
+    setInterval(actualizarFechaHora, 1000);
+
+    document.addEventListener(
+        "visibilitychange",
+        actualizarFechaHora
+    );
+})();
+</script>
+
+{% endblock %}

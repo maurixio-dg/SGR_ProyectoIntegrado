@@ -1,0 +1,186 @@
+
+{% extends "base.html" %}
+
+{% block title %}Períodos de Medición | SGR La Serena{% endblock %}
+{% block breadcrumb %}GESTIÓN / PERÍODOS{% endblock %}
+
+{% block content %}
+
+<div class="module-heading">
+    <div>
+        <h2>Períodos de medición</h2>
+        <p>
+            Administración de períodos para el seguimiento
+            de resultados de las delegaciones municipales.
+        </p>
+    </div>
+
+    <a href="{% url 'gestion:crear_periodo' %}"
+       class="btn-muni">
+        <i class="bi bi-calendar-plus"></i>
+        Nuevo período
+    </a>
+</div>
+
+<!-- FILTROS -->
+
+<div class="panel-card mb-4">
+
+    <form method="get" class="row g-3 align-items-end">
+
+        <div class="col-md-5">
+            <label for="buscar" class="form-label fw-semibold">
+                Buscar período
+            </label>
+
+            <input
+                type="search"
+                id="buscar"
+                name="buscar"
+                value="{{ buscar }}"
+                class="form-control"
+                placeholder="Nombre o descripción..."
+            >
+        </div>
+
+        <div class="col-md-4">
+            <label for="estado" class="form-label fw-semibold">
+                Estado del período
+            </label>
+
+            <select id="estado"
+                    name="estado"
+                    class="form-select">
+
+                <option value="">Todos los estados</option>
+
+                {% for valor, etiqueta in estados %}
+                    <option
+                        value="{{ valor }}"
+                        {% if estado == valor %}selected{% endif %}
+                    >
+                        {{ etiqueta }}
+                    </option>
+                {% endfor %}
+
+            </select>
+        </div>
+
+        <div class="col-md-3 d-flex gap-2">
+            <button type="submit"
+                    class="btn btn-dark flex-fill">
+                <i class="bi bi-search"></i>
+                Buscar
+            </button>
+
+            <a href="{% url 'gestion:listar_periodos' %}"
+               class="btn btn-outline-secondary">
+                Limpiar
+            </a>
+        </div>
+
+    </form>
+</div>
+
+<!-- TABLA -->
+
+<div class="panel-card">
+
+    <div class="module-table-heading">
+        <h5>Períodos registrados</h5>
+
+        <span class="record-count">
+            {{ total }} resultado{{ total|pluralize }}
+        </span>
+    </div>
+
+    <div class="table-responsive">
+
+        <table class="table table-hover align-middle sgr-table">
+
+            <thead>
+                <tr>
+                    <th>Período</th>
+                    <th>Fecha de inicio</th>
+                    <th>Fecha de término</th>
+                    <th>Estado</th>
+                    <th>Descripción</th>
+                    <th class="text-end">Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for periodo in periodos %}
+
+                    <tr>
+
+                        <td>
+                            <strong>{{ periodo.nombre }}</strong>
+                        </td>
+
+                        <td>
+                            {{ periodo.fecha_inicio|date:"d/m/Y" }}
+                        </td>
+
+                        <td>
+                            {{ periodo.fecha_fin|date:"d/m/Y" }}
+                        </td>
+
+                        <td>
+                            {% if periodo.estado == "PLAN" %}
+                                <span class="badge bg-secondary">
+                                    Planificado
+                                </span>
+                            {% elif periodo.estado == "CURSO" %}
+                                <span class="badge bg-primary">
+                                    En curso
+                                </span>
+                            {% elif periodo.estado == "FIN" %}
+                                <span class="badge bg-success">
+                                    Finalizado
+                                </span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {{ periodo.descripcion|default:"Sin descripción"|truncatechars:65 }}
+                        </td>
+
+                        <td class="text-end">
+                            <a
+                                href="{% url 'gestion:editar_periodo' periodo.pk %}"
+                                class="btn btn-outline-primary btn-sm"
+                            >
+                                <i class="bi bi-pencil-square"></i>
+                                Editar
+                            </a>
+                        </td>
+
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+                        <td colspan="6">
+                            <div class="module-empty">
+                                <i class="bi bi-calendar3"></i>
+
+                                <h5>No se encontraron períodos</h5>
+
+                                <p>
+                                    Registre un período o modifique
+                                    los filtros de búsqueda.
+                                </p>
+                            </div>
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,51 @@
+
+{% extends "base.html" %}
+
+{% block title %}Eliminar delegación | SGR{% endblock %}
+{% block breadcrumb %}ELIMINAR DELEGACIÓN{% endblock %}
+
+{% block content %}
+
+<div class="module-heading">
+    <div>
+        <h2>Eliminar delegación</h2>
+        <p>Confirmación de eliminación del registro.</p>
+    </div>
+</div>
+
+<div class="panel-card module-form-card">
+
+    <div class="alert alert-warning">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        Esta acción eliminará el registro de forma permanente.
+    </div>
+
+    <p>
+        ¿Está seguro de que desea eliminar la delegación
+        <strong>{{ delegacion.nombre }}</strong>?
+    </p>
+
+    <p class="text-muted">
+        Si tiene funcionarios asociados, el sistema impedirá
+        la eliminación para proteger la integridad de los datos.
+    </p>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="d-flex justify-content-end gap-2">
+            <a href="{% url 'delegaciones:listar' %}"
+               class="btn btn-outline-secondary">
+                Cancelar
+            </a>
+
+            <button type="submit" class="btn btn-danger">
+                <i class="bi bi-trash"></i>
+                Confirmar eliminación
+            </button>
+        </div>
+    </form>
+
+</div>
+
+{% endblock %}

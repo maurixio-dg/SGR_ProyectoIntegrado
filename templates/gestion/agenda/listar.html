@@ -1,0 +1,235 @@
+
+{% extends "base.html" %}
+
+{% block title %}Agenda Colectiva | SGR La Serena{% endblock %}
+{% block breadcrumb %}GESTIÓN / AGENDA COLECTIVA{% endblock %}
+
+{% block content %}
+
+<div class="module-heading">
+    <div>
+        <h2>Agenda colectiva</h2>
+        <p>
+            Seguimiento de compromisos y actividades programadas
+            de las delegaciones municipales.
+        </p>
+    </div>
+
+    <span class="badge bg-secondary">
+        Datos de demostración
+    </span>
+</div>
+
+<div class="panel-card mb-4">
+
+    <div class="row g-3 align-items-end">
+
+        <div class="col-md-4">
+            <label for="buscarCompromiso" class="form-label fw-semibold">
+                Buscar compromiso
+            </label>
+            <input
+                type="search"
+                id="buscarCompromiso"
+                class="form-control"
+                placeholder="Solicitante, responsable o territorio..."
+            >
+        </div>
+
+        <div class="col-md-3">
+            <label for="filtrarEstado" class="form-label fw-semibold">
+                Estado
+            </label>
+            <select id="filtrarEstado" class="form-select">
+                <option value="">Todos los estados</option>
+                <option value="ingresado">Ingresado</option>
+                <option value="pendiente">Pendiente</option>
+                <option value="en proceso">En proceso</option>
+                <option value="realizado">Realizado</option>
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <label for="filtrarTerritorio" class="form-label fw-semibold">
+                Territorio
+            </label>
+            <select id="filtrarTerritorio" class="form-select">
+                <option value="">Todos</option>
+                <option value="Sector Norte">Sector Norte</option>
+                <option value="Sector Centro">Sector Centro</option>
+                <option value="Sector Sur">Sector Sur</option>
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <button
+                type="button"
+                id="limpiarFiltros"
+                class="btn btn-outline-secondary w-100"
+            >
+                <i class="bi bi-arrow-counterclockwise"></i>
+                Limpiar
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<div class="panel-card">
+
+    <div class="module-table-heading">
+        <h5>Compromisos registrados</h5>
+        <span id="totalCompromisos" class="record-count">
+            4 registros
+        </span>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle sgr-table">
+
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Solicitante</th>
+                    <th>Territorio</th>
+                    <th>Responsable</th>
+                    <th>Área de apoyo</th>
+                    <th>Estado</th>
+                    <th class="text-end">Acción</th>
+                </tr>
+            </thead>
+
+            <tbody id="tablaCompromisos">
+
+                <tr data-estado="ingresado" data-territorio="Sector Norte">
+                    <td>15/10/2026</td>
+                    <td>Organización vecinal A</td>
+                    <td>Sector Norte</td>
+                    <td>Funcionario A</td>
+                    <td>Operaciones</td>
+                    <td><span class="badge bg-secondary">Ingresado</span></td>
+                    <td class="text-end">
+                        <a href="{% url 'gestion:detalle_compromiso' 'SGR-AG-001' %}"
+                           class="btn btn-outline-primary btn-sm">
+                            Ver
+                        </a>
+                    </td>
+                </tr>
+
+                <tr data-estado="pendiente" data-territorio="Sector Centro">
+                    <td>16/10/2026</td>
+                    <td>Organización territorial B</td>
+                    <td>Sector Centro</td>
+                    <td>Funcionario B</td>
+                    <td>Área social</td>
+                    <td><span class="badge bg-warning text-dark">Pendiente</span></td>
+                    <td class="text-end">
+                        <a href="{% url 'gestion:detalle_compromiso' 'SGR-AG-002' %}"
+                           class="btn btn-outline-primary btn-sm">
+                            Ver
+                        </a>
+                    </td>
+                </tr>
+
+                <tr data-estado="en proceso" data-territorio="Sector Sur">
+                    <td>18/10/2026</td>
+                    <td>Comité comunitario C</td>
+                    <td>Sector Sur</td>
+                    <td>Funcionario C</td>
+                    <td>Infraestructura</td>
+                    <td><span class="badge bg-primary">En proceso</span></td>
+                    <td class="text-end">
+                        <a href="{% url 'gestion:detalle_compromiso' 'SGR-AG-003' %}"
+                           class="btn btn-outline-primary btn-sm">
+                            Ver
+                        </a>
+                    </td>
+                </tr>
+
+                <tr data-estado="realizado" data-territorio="Sector Norte">
+                    <td>20/10/2026</td>
+                    <td>Junta vecinal D</td>
+                    <td>Sector Norte</td>
+                    <td>Funcionario A</td>
+                    <td>Territorial</td>
+                    <td><span class="badge bg-success">Realizado</span></td>
+                    <td class="text-end">
+                        <a href="{% url 'gestion:detalle_compromiso' 'SGR-AG-004' %}"
+                           class="btn btn-outline-primary btn-sm">
+                            Ver
+                        </a>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+
+    <div id="sinCompromisos"
+         class="text-center text-muted py-4 d-none">
+        No se encontraron compromisos con los filtros seleccionados.
+    </div>
+
+    <p class="small text-muted mt-3 mb-0">
+        <i class="bi bi-info-circle me-1"></i>
+        Registros ficticios para demostración de interfaces.
+        No representan operaciones guardadas en MySQL.
+    </p>
+
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const buscar = document.getElementById("buscarCompromiso");
+    const estado = document.getElementById("filtrarEstado");
+    const territorio = document.getElementById("filtrarTerritorio");
+    const limpiar = document.getElementById("limpiarFiltros");
+    const filas = document.querySelectorAll("#tablaCompromisos tr");
+    const total = document.getElementById("totalCompromisos");
+    const vacio = document.getElementById("sinCompromisos");
+
+    function aplicarFiltros() {
+        const texto = buscar.value.trim().toLocaleLowerCase("es-CL");
+        let visibles = 0;
+
+        filas.forEach(function (fila) {
+            const coincideTexto = fila.textContent
+                .toLocaleLowerCase("es-CL")
+                .includes(texto);
+
+            const coincideEstado = !estado.value ||
+                fila.dataset.estado === estado.value;
+
+            const coincideTerritorio = !territorio.value ||
+                fila.dataset.territorio === territorio.value;
+
+            const mostrar = coincideTexto &&
+                coincideEstado &&
+                coincideTerritorio;
+
+            fila.classList.toggle("d-none", !mostrar);
+
+            if (mostrar) visibles++;
+        });
+
+        total.textContent = visibles === 1
+            ? "1 registro"
+            : visibles + " registros";
+
+        vacio.classList.toggle("d-none", visibles !== 0);
+    }
+
+    buscar.addEventListener("input", aplicarFiltros);
+    estado.addEventListener("change", aplicarFiltros);
+    territorio.addEventListener("change", aplicarFiltros);
+
+    limpiar.addEventListener("click", function () {
+        buscar.value = "";
+        estado.value = "";
+        territorio.value = "";
+        aplicarFiltros();
+    });
+});
+</script>
+
+{% endblock %}

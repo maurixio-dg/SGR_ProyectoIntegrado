@@ -1,0 +1,33 @@
+# Entornos virtuales
+venv/
+.venv/
+
+# Variables de entorno y credenciales
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Base de datos local
+db.sqlite3
+*.sqlite3
+
+# Archivos temporales
+*.log
+.pytest_cache/
+.vscode/
+
+# Claves SSH
+*.pem
+*.key
+
+# Archivos locales
+.DS_Store
+Thumbs.db
+
+# Respaldos de bases de datos
+backups/
+*.sql

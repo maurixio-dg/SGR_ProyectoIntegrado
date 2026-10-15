@@ -1,0 +1,78 @@
+
+{% extends "base.html" %}
+
+{% block title %}{{ titulo }} | SGR{% endblock %}
+{% block breadcrumb %}ADMINISTRACIÓN DE DELEGACIONES{% endblock %}
+
+{% block content %}
+
+<div class="module-heading">
+    <div>
+        <h2>{{ titulo }}</h2>
+        <p>Complete la información de la delegación municipal.</p>
+    </div>
+
+    <a href="{% url 'delegaciones:listar' %}"
+       class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i>
+        Volver
+    </a>
+</div>
+
+<div class="panel-card module-form-card">
+
+    <form method="post">
+        {% csrf_token %}
+
+        {% if formulario.non_field_errors %}
+            <div class="alert alert-danger">
+                {{ formulario.non_field_errors }}
+            </div>
+        {% endif %}
+
+        <div class="mb-4">
+            <label for="{{ formulario.nombre.id_for_label }}"
+                   class="form-label fw-semibold">
+                Nombre de la delegación
+            </label>
+
+            {{ formulario.nombre }}
+
+            {% for error in formulario.nombre.errors %}
+                <div class="text-danger small mt-1">
+                    {{ error }}
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="form-check mb-4">
+            {{ formulario.estado }}
+
+            <label for="{{ formulario.estado.id_for_label }}"
+                   class="form-check-label">
+                Delegación activa
+            </label>
+
+            {% for error in formulario.estado.errors %}
+                <div class="text-danger small">
+                    {{ error }}
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="d-flex justify-content-end gap-2">
+            <a href="{% url 'delegaciones:listar' %}"
+               class="btn btn-outline-secondary">
+                Cancelar
+            </a>
+
+            <button type="submit" class="btn-muni border-0">
+                <i class="bi bi-check-lg"></i>
+                {{ accion }}
+            </button>
+        </div>
+
+    </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,377 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}SGR | Municipalidad de La Serena{% endblock %}</title>
+
+    <!-- Bootstrap 5 -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <!-- Bootstrap Icons -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+        rel="stylesheet"
+    >
+
+    <!-- Estilos institucionales -->
+    <link
+        rel="stylesheet"
+        href="{% static 'css/municipal.css' %}"
+    >
+
+    <!-- Logo municipal -->
+    <link
+        rel="icon"
+        type="image/png"
+        href="{% static 'img/logo.png' %}"
+    >
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body class="sgr-body">
+
+<div class="sgr-layout">
+
+    <!-- =====================================
+         MENÚ LATERAL
+    ====================================== -->
+
+    <aside class="sgr-sidebar">
+
+        <!-- IDENTIDAD INSTITUCIONAL -->
+        <div class="sidebar-top">
+
+            <div class="brand-box">
+
+                <div class="brand-logo">
+                    <img
+                        src="{% static 'img/logo.png' %}"
+                        alt="Identidad visual de La Serena"
+                        class="logo-municipal"
+                    >
+                </div>
+
+                <div class="brand-text">
+                    <strong>Municipalidad de La Serena</strong>
+                    <span>SGR · Delegaciones Municipales</span>
+                   
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- NAVEGACIÓN PRINCIPAL -->
+        <nav class="sidebar-nav" aria-label="Navegación principal">
+
+            <!-- PANEL PRINCIPAL -->
+            <a
+                href="{% url 'gestion:dashboard' %}"
+                class="nav-link-sgr {% if request.resolver_match.namespace == 'gestion' and request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
+                {% if request.resolver_match.namespace == 'gestion' and request.resolver_match.url_name == 'dashboard' %}aria-current="page"{% endif %}
+            >
+                <i class="bi bi-grid-1x2-fill" aria-hidden="true"></i>
+                <span>Panel principal</span>
+            </a>
+
+            <!-- GESTIÓN MUNICIPAL -->
+            <div class="nav-section-title">
+                GESTIÓN MUNICIPAL
+            </div>
+
+            <!-- MÓDULOS ADMINISTRATIVOS -->
+            {% if request.user.is_superuser or request.user.rol == 'ADMIN' %}
+
+                <!-- DELEGACIONES -->
+                <a
+                    href="{% url 'delegaciones:listar' %}"
+                    class="nav-link-sgr {% if request.resolver_match.namespace == 'delegaciones' %}active{% endif %}"
+                    {% if request.resolver_match.namespace == 'delegaciones' %}aria-current="page"{% endif %}
+                >
+                    <i class="bi bi-bank" aria-hidden="true"></i>
+                    <span>Delegaciones</span>
+                </a>
+
+                <!-- CARGOS -->
+                <a
+                    href="{% url 'catalogos:listar_cargos' %}"
+                    class="nav-link-sgr {% if request.resolver_match.namespace == 'catalogos' %}active{% endif %}"
+                    {% if request.resolver_match.namespace == 'catalogos' %}aria-current="page"{% endif %}
+                >
+                    <i class="bi bi-briefcase-fill" aria-hidden="true"></i>
+                    <span>Cargos</span>
+                </a>
+
+            {% endif %}
+
+            <!-- FUNCIONARIOS -->
+{% if request.user.is_superuser or request.user.rol == 'ADMIN' %}
+<a
+    href="{% url 'funcionarios:listar' %}"
+    class="nav-link-sgr {% if request.resolver_match.namespace == 'funcionarios' %}active{% endif %}"
+    {% if request.resolver_match.namespace == 'funcionarios' %}aria-current="page"{% endif %}
+>
+    <i class="bi bi-people-fill" aria-hidden="true"></i>
+    <span>Funcionarios</span>
+</a>
+{% endif %}
+
+            <!-- USUARIOS --->
+            {% if request.user.is_superuser %}
+<a
+    href="{% url 'usuarios:listar' %}"
+    class="nav-link-sgr {% if request.resolver_match.namespace == 'usuarios' %}active{% endif %}"
+    {% if request.resolver_match.namespace == 'usuarios' %}aria-current="page"{% endif %}
+>
+    <i class="bi bi-person-circle" aria-hidden="true"></i>
+    <span>Usuarios</span>
+</a>
+{% endif %}
+
+            <!-- FUNCIONES:  -->
+            
+{% if request.user.is_superuser or request.user.rol == 'ADMIN' %}
+<a
+    href="{% url 'catalogos:listar_funciones' %}"
+    class="nav-link-sgr {% if request.resolver_match.url_name == 'listar_funciones' or request.resolver_match.url_name == 'crear_funcion' or request.resolver_match.url_name == 'editar_funcion' %}active{% endif %}"
+>
+    <i class="bi bi-list-check" aria-hidden="true"></i>
+    <span>Funciones</span>
+</a>
+{% endif %}
+
+
+            <!-- PERÍODOS Y CATÁLOGOS: -->
+            
+{% if request.user.is_superuser or request.user.rol == 'ADMIN' %}
+<a
+    href="{% url 'gestion:listar_periodos' %}"
+    class="nav-link-sgr {% if request.resolver_match.url_name == 'listar_periodos' or request.resolver_match.url_name == 'crear_periodo' or request.resolver_match.url_name == 'editar_periodo' %}active{% endif %}"
+>
+    <i class="bi bi-calendar-range" aria-hidden="true"></i>
+    <span>Períodos de medición</span>
+</a>
+{% endif %}
+
+
+            <!-- GESTIÓN OPERATIVA -->
+            <div class="nav-section-title">
+                GESTIÓN OPERATIVA
+            </div>
+
+            <!-- ACTIVIDADES -->
+             <a
+    href="{% url 'gestion:listar_actividades' %}"
+    class="nav-link-sgr {% if request.resolver_match.url_name == 'listar_actividades' or request.resolver_match.url_name == 'registrar_actividad' %}active{% endif %}"
+>
+    <i class="bi bi-journal-text" aria-hidden="true"></i>
+    <span>Actividades</span>
+</a>
+
+            <!-- AGENDA COLECTIVA -->
+           <a
+    href="{% url 'gestion:agenda_colectiva' %}"
+    class="nav-link-sgr {% if request.resolver_match.url_name == 'agenda_colectiva' or request.resolver_match.url_name == 'detalle_compromiso' %}active{% endif %}"
+>
+    <i class="bi bi-calendar-event" aria-hidden="true"></i>
+    <span>Agenda colectiva</span>
+</a>
+
+            <!-- INDICADORES -->
+            <a
+    href="{% url 'gestion:indicadores' %}"
+    class="nav-link-sgr {% if request.resolver_match.url_name == 'indicadores' %}active{% endif %}"
+>
+    <i class="bi bi-bar-chart-fill" aria-hidden="true"></i>
+    <span>Indicadores</span>
+</a>
+
+            <!-- INFORMES -->
+            <a
+    href="{% url 'gestion:informes_gestion' %}"
+    class="nav-link-sgr {% if request.resolver_match.url_name == 'informes_gestion' %}active{% endif %}"
+>
+    <i class="bi bi-file-earmark-bar-graph" aria-hidden="true"></i>
+    <span>Informes</span>
+</a>
+
+        <!-- =====================================
+             CONFIGURACIÓN Y SESIÓN
+        ====================================== -->
+
+        <div class="sidebar-footer">
+
+            <div class="nav-section-title">
+                CONFIGURACIÓN
+            </div>
+
+            <div class="sidebar-user-info">
+                <i class="bi bi-person-circle" aria-hidden="true"></i>
+                <span>{{ request.user.get_username }}</span>
+            </div>
+
+            <!-- CIERRE DE SESIÓN POR POST -->
+            <form
+                method="post"
+                action="{% url 'logout' %}"
+                class="logout-form"
+            >
+                {% csrf_token %}
+
+                <button
+                    type="submit"
+                    class="nav-link-sgr logout-button"
+                >
+                    <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
+                    <span>Cerrar sesión</span>
+                </button>
+            </form>
+
+        </div>
+
+    </aside>
+
+    <!-- =====================================
+         CONTENIDO PRINCIPAL
+    ====================================== -->
+
+    <div class="sgr-main-wrapper">
+
+        <!-- CABECERA SUPERIOR -->
+        <header class="sgr-topbar">
+
+            <div class="topbar-left">
+                <div class="breadcrumb-mini">
+
+                    <i class="bi bi-chevron-right" aria-hidden="true"></i>
+
+                    <span>
+                        {% block breadcrumb %}
+                            PANEL PRINCIPAL
+                        {% endblock %}
+                    </span>
+
+                </div>
+            </div>
+
+            <!-- INFORMACIÓN DE USUARIO -->
+            <div class="topbar-right">
+
+                <div class="user-pill">
+
+                    <!-- AVATAR -->
+                    <div class="user-avatar">
+                        {{ request.user.username|slice:":1"|upper }}
+                    </div>
+
+                    <div class="user-meta">
+
+                        <!-- NOMBRE -->
+                        <strong>
+                            {% if request.user.first_name %}
+                                {{ request.user.first_name }}
+                                {{ request.user.last_name }}
+                            {% else %}
+                                {{ request.user.username }}
+                            {% endif %}
+                        </strong>
+
+                        <!-- ROL -->
+                        <small>
+                            {% if request.user.is_superuser %}
+                                Administrador
+                            {% else %}
+                                {{ request.user.get_rol_display }}
+                            {% endif %}
+                        </small>
+
+                    </div>
+
+                    <i class="bi bi-person-check" aria-hidden="true"></i>
+
+                </div>
+
+            </div>
+
+        </header>
+
+        <!-- =====================================
+             MENSAJES DEL SISTEMA
+        ====================================== -->
+
+        {% if messages %}
+
+        <div class="container-fluid px-4 pt-3">
+
+            {% for message in messages %}
+
+                <div
+                    class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show"
+                    role="alert"
+                >
+                    {{ message }}
+
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert"
+                        aria-label="Cerrar aviso"
+                    ></button>
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% endif %}
+
+        <!-- =====================================
+             CONTENIDO DINÁMICO
+        ====================================== -->
+
+        <main
+            class="sgr-content"
+            id="contenido-principal"
+        >
+            {% block content %}
+            {% endblock %}
+        </main>
+
+        <!-- =====================================
+             PIE DE PÁGINA
+        ====================================== -->
+
+        <footer class="sgr-footer">
+
+            <span>
+                Sistema de Gestión de Resultados — SGR
+            </span>
+
+            <span>
+                Ilustre Municipalidad de La Serena
+            </span>
+
+        </footer>
+
+    </div>
+
+</div>
+
+<!-- BOOTSTRAP JAVASCRIPT -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+{% block scripts %}
+{% endblock %}
+
+</body>
+</html>

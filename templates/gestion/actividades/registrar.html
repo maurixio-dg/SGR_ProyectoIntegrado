@@ -1,0 +1,246 @@
+
+{% extends "base.html" %}
+
+{% block title %}Registrar actividad | SGR La Serena{% endblock %}
+{% block breadcrumb %}GESTIÓN / ACTIVIDADES Y EVIDENCIAS{% endblock %}
+
+{% block content %}
+
+<div class="module-heading">
+    <div>
+        <h2>Registrar actividad</h2>
+        <p>
+            Registro de actividades realizadas
+            por funcionarios municipales.
+        </p>
+    </div>
+
+    <a href="{% url 'gestion:listar_actividades' %}"
+       class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i>
+        Volver
+    </a>
+</div>
+
+<div class="panel-card module-form-card">
+
+    <div class="alert alert-info mb-4">
+        <i class="bi bi-info-circle me-2"></i>
+        Prototipo de interfaz de la Etapa 2.
+        El registro de actividades todavía no almacena datos.
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h5 class="fw-bold mb-1">Nueva actividad</h5>
+            <p class="text-muted mb-0">
+                Complete los datos correspondientes a la actividad realizada.
+            </p>
+        </div>
+
+        <span class="badge bg-secondary">Prototipo</span>
+    </div>
+
+    <form>
+
+        <div class="row g-3">
+
+            <div class="col-md-6">
+                <label class="form-label fw-semibold">
+                    Fecha de actividad
+                </label>
+                <input type="date" class="form-control">
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label fw-semibold">
+                    Ítem de medición
+                </label>
+                <select class="form-select">
+                    <option value="">Seleccione un ítem</option>
+                </select>
+                <div class="form-text">
+                    Las opciones se incorporarán con el módulo de indicadores.
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label fw-semibold">
+                    Delegación municipal
+                </label>
+                <select class="form-select">
+                    <option value="">Seleccione una delegación</option>
+
+                    {% for delegacion in delegaciones %}
+                        <option value="{{ delegacion.pk }}">
+                            {{ delegacion.nombre }}
+                        </option>
+                    {% endfor %}
+
+                </select>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label fw-semibold">
+                    Funcionario responsable
+                </label>
+                <select class="form-select">
+                    <option value="">Seleccione un funcionario</option>
+
+                    {% for funcionario in funcionarios %}
+                        <option value="{{ funcionario.pk }}">
+                            {{ funcionario.nombre }}
+                        </option>
+                    {% endfor %}
+
+                </select>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label fw-semibold">
+                    Período de medición
+                </label>
+                <select class="form-select">
+                    <option value="">Seleccione un período</option>
+
+                    {% for periodo in periodos %}
+                        <option value="{{ periodo.pk }}">
+                            {{ periodo.nombre }}
+                        </option>
+                    {% endfor %}
+
+                </select>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label fw-semibold">
+                    Tipo de actividad o servicio
+                </label>
+                <select class="form-select">
+                    <option value="">Seleccione una opción</option>
+                    <option>Actividad territorial</option>
+                    <option>Atención a vecinos</option>
+                    <option>Coordinación comunitaria</option>
+                    <option>Servicio municipal</option>
+                </select>
+                <div class="form-text">
+                    Opciones ilustrativas pendientes de catálogo definitivo.
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <label class="form-label fw-semibold">
+                    Actividad, solicitud o problema atendido
+                </label>
+                <textarea
+                    class="form-control"
+                    rows="3"
+                    placeholder="Describa la actividad realizada"
+                ></textarea>
+            </div>
+
+            <div class="col-md-12">
+                <label class="form-label fw-semibold">
+                    Acción ejecutada
+                </label>
+                <textarea
+                    class="form-control"
+                    rows="3"
+                    placeholder="Describa la acción realizada"
+                ></textarea>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label fw-semibold">
+                    Nombre o referencia de contacto
+                </label>
+                <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Contacto relacionado"
+                >
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label fw-semibold">
+                    Teléfono
+                </label>
+                <input
+                    type="tel"
+                    class="form-control"
+                    placeholder="Teléfono de contacto"
+                >
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label fw-semibold">
+                    Subtipo
+                </label>
+                <select class="form-select">
+                    <option value="">Seleccione una opción</option>
+                </select>
+            </div>
+
+            <div class="col-md-12">
+                <div class="form-check mt-2">
+                    <input
+                        type="checkbox"
+                        class="form-check-input"
+                        id="agenda_colectiva"
+                    >
+                    <label
+                        for="agenda_colectiva"
+                        class="form-check-label"
+                    >
+                        Ingresar esta actividad a la agenda colectiva
+                    </label>
+                </div>
+            </div>
+
+        </div>
+
+        <hr class="my-4">
+
+        <h5 class="fw-bold mb-3">
+            <i class="bi bi-paperclip me-2"></i>
+            Evidencia de la actividad
+        </h5>
+
+        <div class="mb-3">
+            <label class="form-label fw-semibold">
+                Adjuntar evidencia
+            </label>
+            <input
+                type="file"
+                class="form-control"
+                accept="image/*,.pdf"
+                disabled
+            >
+            <div class="form-text">
+                La carga de archivos estará disponible cuando
+                se implemente el registro transaccional.
+            </div>
+        </div>
+
+        <hr class="my-4">
+
+        <div class="d-flex justify-content-end gap-2">
+
+            <a href="{% url 'gestion:listar_actividades' %}"
+               class="btn btn-outline-secondary">
+                Cancelar
+            </a>
+
+            <button type="button"
+                    class="btn-muni border-0"
+                    disabled>
+                <i class="bi bi-check-lg"></i>
+                Guardar actividad
+            </button>
+
+        </div>
+
+    </form>
+</div>
+
+{% endblock %}

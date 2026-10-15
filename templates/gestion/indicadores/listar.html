@@ -1,0 +1,345 @@
+
+{% extends "base.html" %}
+
+{% block title %}Indicadores y Metas | SGR La Serena{% endblock %}
+{% block breadcrumb %}GESTIÓN / INDICADORES Y METAS{% endblock %}
+
+{% block content %}
+
+<div class="module-heading">
+    <div>
+        <h2>Indicadores y metas</h2>
+        <p>
+            Seguimiento del desempeño y cumplimiento de objetivos
+            de las delegaciones municipales.
+        </p>
+    </div>
+    <span class="badge bg-secondary">Datos de demostración</span>
+</div>
+
+<!-- FILTROS -->
+
+<div class="panel-card mb-4">
+
+    <div class="row g-3 align-items-end">
+
+        <div class="col-md-4">
+            <label for="buscarIndicador" class="form-label fw-semibold">
+                Buscar indicador
+            </label>
+            <input
+                type="search"
+                id="buscarIndicador"
+                class="form-control"
+                placeholder="Nombre, cargo o delegación..."
+            >
+        </div>
+
+        <div class="col-md-3">
+            <label for="periodoIndicador" class="form-label fw-semibold">
+                Período de medición
+            </label>
+            <select id="periodoIndicador" class="form-select">
+                <option value="">Todos los períodos</option>
+                {% for periodo in periodos %}
+                    <option value="{{ periodo.pk }}">
+                        {{ periodo.nombre }}
+                    </option>
+                {% endfor %}
+            </select>
+            <div class="form-text">
+                El filtro por período se conectará a las metas reales
+                en una etapa posterior.
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <label for="estadoIndicador" class="form-label fw-semibold">
+                Semáforo
+            </label>
+            <select id="estadoIndicador" class="form-select">
+                <option value="">Todos los estados</option>
+                <option value="verde">Verde</option>
+                <option value="amarillo">Ámbar</option>
+                <option value="rojo">Rojo</option>
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <button
+                type="button"
+                id="limpiarIndicadores"
+                class="btn btn-outline-secondary w-100"
+            >
+                <i class="bi bi-arrow-counterclockwise"></i>
+                Limpiar
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<!-- TARJETAS RESUMEN -->
+
+<div class="row g-4 mb-4">
+
+    <div class="col-md-4">
+        <div class="panel-card h-100">
+            <div class="d-flex align-items-center gap-3">
+                <i class="bi bi-bullseye fs-2 text-primary"></i>
+                <div>
+                    <p class="text-muted mb-1">Indicadores de ejemplo</p>
+                    <h3 class="fw-bold mb-0" id="totalIndicadores">3</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="panel-card h-100">
+            <div class="d-flex align-items-center gap-3">
+                <i class="bi bi-graph-up-arrow fs-2 text-success"></i>
+                <div>
+                    <p class="text-muted mb-1">Cumplimiento promedio</p>
+                    <h3 class="fw-bold mb-0" id="promedioIndicadores">
+                        70%
+                    </h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="panel-card h-100">
+            <div class="d-flex align-items-center gap-3">
+                <i class="bi bi-traffic-light fs-2 text-warning"></i>
+                <div>
+                    <p class="text-muted mb-1">En seguimiento</p>
+                    <h3 class="fw-bold mb-0" id="seguimientoIndicadores">
+                        2
+                    </h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- TABLA -->
+
+<div class="panel-card">
+
+    <div class="module-table-heading">
+        <h5>Seguimiento de indicadores</h5>
+        <span id="cantidadIndicadores" class="record-count">
+            3 resultados de demostración
+        </span>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle sgr-table">
+            <thead>
+                <tr>
+                    <th>Indicador</th>
+                    <th>Delegación</th>
+                    <th>Meta</th>
+                    <th>Avance</th>
+                    <th>Cumplimiento</th>
+                    <th>Ponderación</th>
+                    <th>Semáforo</th>
+                </tr>
+            </thead>
+
+            <tbody id="tablaIndicadores">
+
+                <tr data-semaforo="verde" data-cumplimiento="90">
+                    <td>
+                        <strong>Atenciones comunitarias</strong>
+                        <div class="text-muted small">
+                            Atención territorial
+                        </div>
+                    </td>
+                    <td>Sector Norte</td>
+                    <td>100 atenciones</td>
+                    <td>90</td>
+                    <td style="min-width: 170px;">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>90%</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div
+                                class="progress-bar bg-success"
+                                role="progressbar"
+                                style="width: 90%;"
+                                aria-valuenow="90"
+                                aria-valuemin="0"
+                                aria-valuemax="100"
+                            ></div>
+                        </div>
+                    </td>
+                    <td>40%</td>
+                    <td>
+                        <span class="badge bg-success">
+                            Verde
+                        </span>
+                    </td>
+                </tr>
+
+                <tr data-semaforo="amarillo" data-cumplimiento="75">
+                    <td>
+                        <strong>Actividades comunitarias</strong>
+                        <div class="text-muted small">
+                            Gestión territorial
+                        </div>
+                    </td>
+                    <td>Sector Centro</td>
+                    <td>40 actividades</td>
+                    <td>30</td>
+                    <td>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>75%</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div
+                                class="progress-bar bg-warning"
+                                role="progressbar"
+                                style="width: 75%;"
+                                aria-valuenow="75"
+                                aria-valuemin="0"
+                                aria-valuemax="100"
+                            ></div>
+                        </div>
+                    </td>
+                    <td>35%</td>
+                    <td>
+                        <span class="badge bg-warning text-dark">
+                            Ámbar
+                        </span>
+                    </td>
+                </tr>
+
+                <tr data-semaforo="rojo" data-cumplimiento="45">
+                    <td>
+                        <strong>Inspecciones territoriales</strong>
+                        <div class="text-muted small">
+                            Supervisión comunitaria
+                        </div>
+                    </td>
+                    <td>Sector Sur</td>
+                    <td>20 inspecciones</td>
+                    <td>9</td>
+                    <td>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>45%</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div
+                                class="progress-bar bg-danger"
+                                role="progressbar"
+                                style="width: 45%;"
+                                aria-valuenow="45"
+                                aria-valuemin="0"
+                                aria-valuemax="100"
+                            ></div>
+                        </div>
+                    </td>
+                    <td>25%</td>
+                    <td>
+                        <span class="badge bg-danger">
+                            Rojo
+                        </span>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+
+    <div id="sinIndicadores"
+         class="text-center py-4 text-muted d-none">
+        No se encontraron indicadores con los filtros seleccionados.
+    </div>
+
+    <p class="small text-muted mt-3 mb-0">
+        <i class="bi bi-info-circle me-1"></i>
+        Valores y semáforos ilustrativos. Los umbrales, el avance
+        ponderado y las metas reales se implementarán en una
+        etapa posterior.
+    </p>
+
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const buscar = document.getElementById("buscarIndicador");
+    const semaforo = document.getElementById("estadoIndicador");
+    const periodo = document.getElementById("periodoIndicador");
+    const limpiar = document.getElementById("limpiarIndicadores");
+
+    const filas = document.querySelectorAll("#tablaIndicadores tr");
+    const cantidad = document.getElementById("cantidadIndicadores");
+    const total = document.getElementById("totalIndicadores");
+    const promedio = document.getElementById("promedioIndicadores");
+    const seguimiento = document.getElementById("seguimientoIndicadores");
+    const vacio = document.getElementById("sinIndicadores");
+
+    function aplicarFiltros() {
+        const texto = buscar.value.trim().toLocaleLowerCase("es-CL");
+        let visibles = 0;
+        let suma = 0;
+        let enSeguimiento = 0;
+
+        filas.forEach(function (fila) {
+            const coincideTexto = fila.textContent
+                .toLocaleLowerCase("es-CL")
+                .includes(texto);
+
+            const coincideEstado = !semaforo.value ||
+                fila.dataset.semaforo === semaforo.value;
+
+            // El período aún no filtra registros porque
+            // los datos de demostración no tienen período asignado.
+            const mostrar = coincideTexto && coincideEstado;
+
+            fila.classList.toggle("d-none", !mostrar);
+
+            if (mostrar) {
+                visibles++;
+                suma += Number(fila.dataset.cumplimiento);
+
+                if (fila.dataset.semaforo !== "verde") {
+                    enSeguimiento++;
+                }
+            }
+        });
+
+        cantidad.textContent = visibles === 1
+            ? "1 resultado de demostración"
+            : visibles + " resultados de demostración";
+
+        total.textContent = visibles;
+
+        promedio.textContent = visibles
+            ? Math.round(suma / visibles) + "%"
+            : "0%";
+
+        seguimiento.textContent = enSeguimiento;
+
+        vacio.classList.toggle("d-none", visibles !== 0);
+    }
+
+    buscar.addEventListener("input", aplicarFiltros);
+    semaforo.addEventListener("change", aplicarFiltros);
+
+    limpiar.addEventListener("click", function () {
+        buscar.value = "";
+        semaforo.value = "";
+        periodo.value = "";
+        aplicarFiltros();
+    });
+
+    aplicarFiltros();
+});
+</script>
+
+{% endblock %}

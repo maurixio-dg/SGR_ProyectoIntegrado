@@ -1,0 +1,196 @@
+
+{% extends "base.html" %}
+
+{% block title %}{{ titulo }} | SGR{% endblock %}
+{% block breadcrumb %}ADMINISTRACIÓN DE FUNCIONARIOS{% endblock %}
+
+{% block content %}
+
+<div class="module-heading">
+    <div>
+        <h2>{{ titulo }}</h2>
+        <p>Complete los datos del funcionario municipal.</p>
+    </div>
+
+    <a href="{% url 'funcionarios:listar' %}"
+       class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i>
+        Volver
+    </a>
+</div>
+
+<div class="panel-card module-form-card">
+
+    <form method="post" novalidate>
+        {% csrf_token %}
+
+        {% if formulario.non_field_errors %}
+            <div class="alert alert-danger">
+                {{ formulario.non_field_errors }}
+            </div>
+        {% endif %}
+
+        <!-- DATOS PERSONALES -->
+
+        <h5 class="fw-bold mb-4">
+            <i class="bi bi-person-vcard me-2"></i>
+            Datos del funcionario
+        </h5>
+
+        <div class="row g-3 mb-4">
+
+            <div class="col-md-6">
+                <label
+                    for="{{ formulario.rut.id_for_label }}"
+                    class="form-label fw-semibold"
+                >
+                    RUT
+                </label>
+
+                {{ formulario.rut }}
+
+                {% for error in formulario.rut.errors %}
+                    <div class="text-danger small mt-1">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="col-md-6">
+                <label
+                    for="{{ formulario.nombre.id_for_label }}"
+                    class="form-label fw-semibold"
+                >
+                    Nombre completo
+                </label>
+
+                {{ formulario.nombre }}
+
+                {% for error in formulario.nombre.errors %}
+                    <div class="text-danger small mt-1">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="col-12">
+                <label
+                    for="{{ formulario.email.id_for_label }}"
+                    class="form-label fw-semibold"
+                >
+                    Correo electrónico
+                </label>
+
+                {{ formulario.email }}
+
+                {% for error in formulario.email.errors %}
+                    <div class="text-danger small mt-1">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            </div>
+
+        </div>
+
+        <hr class="my-4">
+
+        <!-- DATOS INSTITUCIONALES -->
+
+        <h5 class="fw-bold mb-4">
+            <i class="bi bi-building me-2"></i>
+            Información institucional
+        </h5>
+
+        <div class="row g-3 mb-4">
+
+            <div class="col-md-6">
+                <label
+                    for="{{ formulario.delegacion.id_for_label }}"
+                    class="form-label fw-semibold"
+                >
+                    Delegación municipal
+                </label>
+
+                {{ formulario.delegacion }}
+
+                {% for error in formulario.delegacion.errors %}
+                    <div class="text-danger small mt-1">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="col-md-6">
+                <label
+                    for="{{ formulario.cargo.id_for_label }}"
+                    class="form-label fw-semibold"
+                >
+                    Cargo
+                </label>
+
+                {{ formulario.cargo }}
+
+                {% for error in formulario.cargo.errors %}
+                    <div class="text-danger small mt-1">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            </div>
+
+        </div>
+
+        <hr class="my-4">
+
+        <!-- CUENTA DEL SISTEMA -->
+
+        <h5 class="fw-bold mb-3">
+            <i class="bi bi-shield-lock me-2"></i>
+            Acceso al sistema
+        </h5>
+
+        <div class="mb-4">
+            <label
+                for="{{ formulario.usuario.id_for_label }}"
+                class="form-label fw-semibold"
+            >
+                Cuenta de usuario
+            </label>
+
+            {{ formulario.usuario }}
+
+            <div class="form-text">
+                Este campo es opcional. Permite asociar
+                una cuenta existente al funcionario.
+            </div>
+
+            {% for error in formulario.usuario.errors %}
+                <div class="text-danger small mt-1">
+                    {{ error }}
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- BOTONES -->
+
+        <div class="d-flex justify-content-end gap-2">
+
+            <a href="{% url 'funcionarios:listar' %}"
+               class="btn btn-outline-secondary">
+                Cancelar
+            </a>
+
+            <button
+                type="submit"
+                class="btn-muni border-0"
+            >
+                <i class="bi bi-check-lg"></i>
+                {{ accion }}
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

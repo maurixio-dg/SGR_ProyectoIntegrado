@@ -1,0 +1,307 @@
+
+{% extends "base.html" %}
+
+{% block title %}Actividades | SGR La Serena{% endblock %}
+{% block breadcrumb %}GESTIÓN / ACTIVIDADES{% endblock %}
+
+{% block content %}
+
+<div class="module-heading">
+    <div>
+        <h2>Actividades y evidencias</h2>
+        <p>
+            Consulta y seguimiento de actividades
+            de las delegaciones municipales.
+        </p>
+    </div>
+
+    <a href="{% url 'gestion:registrar_actividad' %}"
+       class="btn-muni">
+        <i class="bi bi-plus-circle"></i>
+        Nueva actividad
+    </a>
+</div>
+
+<!-- FILTROS -->
+
+<div class="panel-card mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-bold mb-0">Búsqueda de actividades</h5>
+        <span class="badge bg-secondary">
+            Vista demostrativa
+        </span>
+    </div>
+
+    <div class="row g-3 align-items-end">
+
+        <div class="col-md-5">
+            <label for="buscarActividad" class="form-label fw-semibold">
+                Buscar actividad
+            </label>
+
+            <input
+                type="search"
+                id="buscarActividad"
+                class="form-control"
+                placeholder="Actividad, responsable o delegación..."
+            >
+        </div>
+
+        <div class="col-md-4">
+            <label for="estadoActividad" class="form-label fw-semibold">
+                Estado
+            </label>
+
+            <select id="estadoActividad" class="form-select">
+                <option value="">Todos los estados</option>
+                <option value="pendiente">Pendiente</option>
+                <option value="revision">En revisión</option>
+                <option value="aprobada">Aprobada</option>
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <button
+                type="button"
+                class="btn btn-dark w-100"
+                id="btnBuscarActividades"
+            >
+                <i class="bi bi-search"></i>
+                Buscar
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<!-- LISTADO DE ACTIVIDADES -->
+
+<div class="panel-card">
+
+    <div class="module-table-heading">
+        <h5>Actividades registradas</h5>
+
+        <span class="record-count" id="totalActividades">
+            3 registros de demostración
+        </span>
+    </div>
+
+    <div class="table-responsive">
+
+        <table class="table table-hover align-middle sgr-table">
+
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Fecha</th>
+                    <th>Actividad</th>
+                    <th>Responsable</th>
+                    <th>Delegación</th>
+                    <th>Estado</th>
+                    <th class="text-end">Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody id="tablaActividades">
+
+                <!-- ACTIVIDAD 1 -->
+
+                <tr data-estado="aprobada">
+
+                    <td>SGR-DEMO-001</td>
+
+                    <td>12/10/2026</td>
+
+                    <td>
+                        <strong>Reunión con junta de vecinos</strong>
+                    </td>
+
+                    <td>Funcionario A</td>
+
+                    <td>Sector Norte</td>
+
+                    <td>
+                        <span class="badge bg-success">
+                            Aprobada
+                        </span>
+                    </td>
+
+                    <td class="text-end">
+                        <span class="text-muted">—</span>
+                    </td>
+
+                </tr>
+
+                <!-- ACTIVIDAD 2 -->
+
+                <tr data-estado="pendiente">
+
+                    <td>SGR-DEMO-002</td>
+
+                    <td>13/10/2026</td>
+
+                    <td>
+                        <strong>
+                            Coordinación de servicios municipales
+                        </strong>
+                    </td>
+
+                    <td>Funcionario B</td>
+
+                    <td>Sector Centro</td>
+
+                    <td>
+                        <span class="badge bg-warning text-dark">
+                            Pendiente
+                        </span>
+                    </td>
+
+                    <td class="text-end">
+                        <span class="text-muted">—</span>
+                    </td>
+
+                </tr>
+
+                <!-- ACTIVIDAD 3 -->
+
+                <tr data-estado="revision">
+
+                    <td>SGR-DEMO-003</td>
+
+                    <td>14/10/2026</td>
+
+                    <td>
+                        <strong>
+                            Inspección territorial comunitaria
+                        </strong>
+                    </td>
+
+                    <td>Funcionario C</td>
+
+                    <td>Sector Sur</td>
+
+                    <td>
+                        <span class="badge bg-primary">
+                            En revisión
+                        </span>
+                    </td>
+
+                    <td class="text-end">
+                        <a
+                            href="{% url 'gestion:validar_evidencias' %}"
+                            class="btn btn-outline-primary btn-sm"
+                        >
+                            <i class="bi bi-shield-check"></i>
+                            Revisar
+                        </a>
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <!-- MENSAJE SIN RESULTADOS -->
+
+    <div
+        id="sinResultados"
+        class="text-center text-muted py-4 d-none"
+    >
+        <i class="bi bi-search fs-3 d-block mb-2"></i>
+        No se encontraron actividades con los filtros seleccionados.
+    </div>
+
+    <!-- NOTA DEMOSTRATIVA -->
+
+    <p class="text-muted small mt-3 mb-0">
+        <i class="bi bi-info-circle me-1"></i>
+        Registros ficticios utilizados exclusivamente para
+        demostrar el diseño de la interfaz.
+    </p>
+
+</div>
+
+<!-- FILTROS EN JAVASCRIPT -->
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const buscar = document.getElementById("buscarActividad");
+    const estado = document.getElementById("estadoActividad");
+    const boton = document.getElementById("btnBuscarActividades");
+
+    const filas = document.querySelectorAll(
+        "#tablaActividades tr"
+    );
+
+    const total = document.getElementById("totalActividades");
+
+    const sinResultados = document.getElementById(
+        "sinResultados"
+    );
+
+    function filtrarActividades() {
+
+        const texto = buscar.value
+            .trim()
+            .toLocaleLowerCase("es-CL");
+
+        const estadoSeleccionado = estado.value;
+
+        let visibles = 0;
+
+        filas.forEach(function (fila) {
+
+            const coincideTexto = fila.textContent
+                .toLocaleLowerCase("es-CL")
+                .includes(texto);
+
+            const coincideEstado = (
+                !estadoSeleccionado ||
+                fila.dataset.estado === estadoSeleccionado
+            );
+
+            const mostrar = coincideTexto && coincideEstado;
+
+            fila.classList.toggle("d-none", !mostrar);
+
+            if (mostrar) {
+                visibles++;
+            }
+
+        });
+
+        total.textContent =
+            visibles === 1
+                ? "1 registro de demostración"
+                : visibles + " registros de demostración";
+
+        sinResultados.classList.toggle(
+            "d-none",
+            visibles !== 0
+        );
+
+    }
+
+    boton.addEventListener(
+        "click",
+        filtrarActividades
+    );
+
+    buscar.addEventListener(
+        "input",
+        filtrarActividades
+    );
+
+    estado.addEventListener(
+        "change",
+        filtrarActividades
+    );
+
+});
+</script>
+
+{% endblock %}

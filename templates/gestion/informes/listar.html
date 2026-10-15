@@ -1,0 +1,461 @@
+
+{% extends "base.html" %}
+
+{% block title %}Informes de Gestión | SGR La Serena{% endblock %}
+{% block breadcrumb %}GESTIÓN / INFORMES{% endblock %}
+
+{% block content %}
+
+<div class="module-heading">
+    <div>
+        <h2>Informes de gestión</h2>
+        <p>
+            Consulta y análisis de resultados de las
+            delegaciones municipales de La Serena.
+        </p>
+    </div>
+
+    <span class="badge bg-secondary">
+        Datos de demostración
+    </span>
+</div>
+
+<!-- FILTROS -->
+
+<div class="panel-card mb-4">
+
+    <div class="panel-card-header">
+        <div>
+            <h5>
+                <i class="bi bi-funnel me-2"></i>
+                Filtros del informe
+            </h5>
+            <p>Seleccione los criterios para consultar los resultados.</p>
+        </div>
+    </div>
+
+    <div class="row g-3 align-items-end">
+
+        <div class="col-md-4">
+            <label for="buscarInforme" class="form-label fw-semibold">
+                Buscar
+            </label>
+
+            <input
+                type="search"
+                id="buscarInforme"
+                class="form-control"
+                placeholder="Indicador o delegación..."
+            >
+        </div>
+
+        <div class="col-md-4">
+            <label for="delegacionInforme" class="form-label fw-semibold">
+                Delegación
+            </label>
+
+            <select id="delegacionInforme" class="form-select">
+                <option value="">Todas las delegaciones</option>
+                <option value="Sector Norte">Sector Norte (demo)</option>
+                <option value="Sector Centro">Sector Centro (demo)</option>
+                <option value="Sector Sur">Sector Sur (demo)</option>
+            </select>
+        </div>
+
+        <div class="col-md-4">
+            <label for="periodoInforme" class="form-label fw-semibold">
+                Período de medición
+            </label>
+
+            <select id="periodoInforme" class="form-select">
+                <option value="">Todos los períodos</option>
+
+                {% for periodo in periodos %}
+                    <option value="{{ periodo.pk }}">
+                        {{ periodo.nombre }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-md-4">
+            <label for="fechaDesde" class="form-label fw-semibold">
+                Desde
+            </label>
+            <input
+                type="date"
+                id="fechaDesde"
+                class="form-control"
+            >
+        </div>
+
+        <div class="col-md-4">
+            <label for="fechaHasta" class="form-label fw-semibold">
+                Hasta
+            </label>
+            <input
+                type="date"
+                id="fechaHasta"
+                class="form-control"
+            >
+        </div>
+
+        <div class="col-md-4 d-flex gap-2">
+            <button
+                type="button"
+                id="buscarInformes"
+                class="btn btn-dark flex-fill"
+            >
+                <i class="bi bi-search"></i>
+                Consultar
+            </button>
+
+            <button
+                type="button"
+                id="limpiarInformes"
+                class="btn btn-outline-secondary"
+            >
+                Limpiar
+            </button>
+        </div>
+
+    </div>
+
+    <p class="small text-muted mt-3 mb-0">
+        Los filtros de período se presentan como referencia.
+        Esta demostración utiliza registros ficticios fechados
+        en octubre de 2026.
+    </p>
+
+</div>
+
+<!-- RESUMEN -->
+
+<div class="row g-4 mb-4">
+
+    <div class="col-md-4">
+        <div class="panel-card h-100">
+            <div class="d-flex align-items-center gap-3">
+                <i class="bi bi-buildings fs-2 text-primary"></i>
+
+                <div>
+                    <p class="text-muted mb-1">
+                        Delegaciones representadas
+                    </p>
+                    <h3 class="fw-bold mb-0" id="resumenDelegaciones">
+                        3
+                    </h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="panel-card h-100">
+            <div class="d-flex align-items-center gap-3">
+                <i class="bi bi-clipboard-data fs-2 text-success"></i>
+
+                <div>
+                    <p class="text-muted mb-1">
+                        Indicadores consultados
+                    </p>
+                    <h3 class="fw-bold mb-0" id="resumenIndicadores">
+                        3
+                    </h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="panel-card h-100">
+            <div class="d-flex align-items-center gap-3">
+                <i class="bi bi-graph-up-arrow fs-2 text-warning"></i>
+
+                <div>
+                    <p class="text-muted mb-1">
+                        Cumplimiento promedio
+                    </p>
+                    <h3 class="fw-bold mb-0" id="resumenCumplimiento">
+                        70%
+                    </h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- RESULTADOS -->
+
+<div class="panel-card">
+
+    <div class="module-table-heading">
+        <h5>
+            <i class="bi bi-file-earmark-bar-graph me-2"></i>
+            Resultados de gestión
+        </h5>
+
+        <span id="totalInformes" class="record-count">
+            3 resultados
+        </span>
+    </div>
+
+    <div class="table-responsive">
+
+        <table class="table table-hover align-middle sgr-table">
+
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Delegación</th>
+                    <th>Indicador</th>
+                    <th>Meta</th>
+                    <th>Avance</th>
+                    <th>Cumplimiento</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+
+            <tbody id="tablaInformes">
+
+                <tr
+                    data-delegacion="Sector Norte"
+                    data-fecha="2026-10-12"
+                    data-cumplimiento="90"
+                >
+                    <td>12/10/2026</td>
+                    <td>Sector Norte</td>
+                    <td>
+                        <strong>Atenciones comunitarias</strong>
+                    </td>
+                    <td>100</td>
+                    <td>90</td>
+                    <td>
+                        <strong>90%</strong>
+                    </td>
+                    <td>
+                        <span class="badge bg-success">
+                            Verde
+                        </span>
+                    </td>
+                </tr>
+
+                <tr
+                    data-delegacion="Sector Centro"
+                    data-fecha="2026-10-13"
+                    data-cumplimiento="75"
+                >
+                    <td>13/10/2026</td>
+                    <td>Sector Centro</td>
+                    <td>
+                        <strong>Actividades comunitarias</strong>
+                    </td>
+                    <td>40</td>
+                    <td>30</td>
+                    <td>
+                        <strong>75%</strong>
+                    </td>
+                    <td>
+                        <span class="badge bg-warning text-dark">
+                            Ámbar
+                        </span>
+                    </td>
+                </tr>
+
+                <tr
+                    data-delegacion="Sector Sur"
+                    data-fecha="2026-10-14"
+                    data-cumplimiento="45"
+                >
+                    <td>14/10/2026</td>
+                    <td>Sector Sur</td>
+                    <td>
+                        <strong>Inspecciones territoriales</strong>
+                    </td>
+                    <td>20</td>
+                    <td>9</td>
+                    <td>
+                        <strong>45%</strong>
+                    </td>
+                    <td>
+                        <span class="badge bg-danger">
+                            Rojo
+                        </span>
+                    </td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <div
+        id="sinInformes"
+        class="text-center text-muted py-4 d-none"
+    >
+        <i class="bi bi-search fs-3 d-block mb-2"></i>
+        No se encontraron resultados con los filtros seleccionados.
+    </div>
+
+    <div
+        id="errorFechas"
+        class="alert alert-warning mt-3 d-none"
+        role="alert"
+    >
+        La fecha de término no puede ser anterior a la fecha de inicio.
+    </div>
+
+    <hr class="my-4">
+
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+        <p class="text-muted small mb-0">
+            <i class="bi bi-info-circle me-1"></i>
+            Reporte ilustrativo. Los resultados no provienen
+            de actividades almacenadas en MySQL.
+        </p>
+
+        <button
+            type="button"
+            class="btn btn-outline-secondary"
+            disabled
+            title="Exportación disponible en una etapa posterior"
+        >
+            <i class="bi bi-download me-1"></i>
+            Exportar informe
+        </button>
+
+    </div>
+
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const buscar = document.getElementById("buscarInforme");
+    const delegacion = document.getElementById("delegacionInforme");
+    const periodo = document.getElementById("periodoInforme");
+    const desde = document.getElementById("fechaDesde");
+    const hasta = document.getElementById("fechaHasta");
+
+    const consultar = document.getElementById("buscarInformes");
+    const limpiar = document.getElementById("limpiarInformes");
+
+    const filas = Array.from(
+        document.querySelectorAll("#tablaInformes tr")
+    );
+
+    const total = document.getElementById("totalInformes");
+    const resumenDelegaciones = document.getElementById(
+        "resumenDelegaciones"
+    );
+    const resumenIndicadores = document.getElementById(
+        "resumenIndicadores"
+    );
+    const resumenCumplimiento = document.getElementById(
+        "resumenCumplimiento"
+    );
+
+    const sinResultados = document.getElementById("sinInformes");
+    const errorFechas = document.getElementById("errorFechas");
+
+    function aplicarFiltros() {
+
+        const texto = buscar.value.trim().toLocaleLowerCase("es-CL");
+
+        if (desde.value && hasta.value && hasta.value < desde.value) {
+            errorFechas.classList.remove("d-none");
+            return;
+        }
+
+        errorFechas.classList.add("d-none");
+
+        let visibles = 0;
+        let suma = 0;
+        const delegaciones = new Set();
+
+        filas.forEach(function (fila) {
+
+            const coincideTexto = fila.textContent
+                .toLocaleLowerCase("es-CL")
+                .includes(texto);
+
+            const coincideDelegacion = (
+                !delegacion.value ||
+                fila.dataset.delegacion === delegacion.value
+            );
+
+            const coincideDesde = (
+                !desde.value ||
+                fila.dataset.fecha >= desde.value
+            );
+
+            const coincideHasta = (
+                !hasta.value ||
+                fila.dataset.fecha <= hasta.value
+            );
+
+            // Los datos ficticios no tienen asignado
+            // un período real de la base de datos.
+
+            const mostrar = (
+                coincideTexto &&
+                coincideDelegacion &&
+                coincideDesde &&
+                coincideHasta
+            );
+
+            fila.classList.toggle("d-none", !mostrar);
+
+            if (mostrar) {
+                visibles++;
+
+                suma += Number(fila.dataset.cumplimiento);
+
+                delegaciones.add(
+                    fila.dataset.delegacion
+                );
+            }
+        });
+
+        total.textContent = visibles === 1
+            ? "1 resultado de demostración"
+            : visibles + " resultados de demostración";
+
+        resumenDelegaciones.textContent = delegaciones.size;
+        resumenIndicadores.textContent = visibles;
+
+        resumenCumplimiento.textContent = visibles
+            ? Math.round(suma / visibles) + "%"
+            : "0%";
+
+        sinResultados.classList.toggle(
+            "d-none",
+            visibles !== 0
+        );
+    }
+
+    consultar.addEventListener("click", aplicarFiltros);
+    buscar.addEventListener("input", aplicarFiltros);
+    delegacion.addEventListener("change", aplicarFiltros);
+    desde.addEventListener("change", aplicarFiltros);
+    hasta.addEventListener("change", aplicarFiltros);
+
+    limpiar.addEventListener("click", function () {
+        buscar.value = "";
+        delegacion.value = "";
+        periodo.value = "";
+        desde.value = "";
+        hasta.value = "";
+
+        aplicarFiltros();
+    });
+
+    aplicarFiltros();
+
+});
+</script>
+
+{% endblock %}
