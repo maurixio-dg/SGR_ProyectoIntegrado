@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Mi perfil | SGR La Serena{% endblock %}
+{% block breadcrumb %}MI PERFIL{% endblock %}
+{% block content %}
+<div class="container-fluid py-3" style="max-width: 900px;">
+  <div class="d-flex align-items-center gap-3 mb-4">
+    <div class="rounded-circle d-flex align-items-center justify-content-center text-white" style="width:58px;height:58px;background:#8d1c2e;font-weight:700;font-size:1.5rem;">{{ request.user.username|slice:':1'|upper }}</div>
+    <div>
+      <h1 class="h3 mb-1">Mi perfil</h1>
+      <p class="text-muted mb-0">Consulta y actualiza tus datos personales.</p>
+    </div>
+  </div>
+  <div class="card border-0 shadow-sm rounded-4 mb-4">
+    <div class="card-body p-4">
+      <h2 class="h5 mb-3"><i class="bi bi-person-lines-fill me-2"></i>Datos de la cuenta</h2>
+      <p class="mb-1"><strong>Usuario:</strong> {{ request.user.username }}</p>
+      <p class="mb-4"><strong>Rol:</strong> {% if request.user.is_superuser %}Administrador{% else %}{{ request.user.get_rol_display }}{% endif %}</p>
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {% for campo in formulario %}
+          <div class="mb-3">
+            <label for="{{ campo.id_for_label }}" class="form-label fw-semibold">{{ campo.label }}</label>
+            {{ campo }}
+            {% for error in campo.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+          </div>
+        {% endfor %}
+        {% for error in formulario.non_field_errors %}<div class="alert alert-danger">{{ error }}</div>{% endfor %}
+        <div class="d-flex gap-2 flex-wrap">
+          <button type="submit" class="btn btn-primary"><i class="bi bi-check-circle me-1"></i>Guardar cambios</button>
+          <a class="btn btn-outline-secondary" href="{% url 'usuarios:cambiar_mi_password' %}"><i class="bi bi-key me-1"></i>Cambiar contraseña</a>
+          <a class="btn btn-light" href="{% url 'gestion:dashboard' %}">Volver al panel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

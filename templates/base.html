@@ -84,13 +84,17 @@
                 <span>Panel principal</span>
             </a>
 
-            <!-- GESTIÓN MUNICIPAL -->
-            <div class="nav-section-title">
-                GESTIÓN MUNICIPAL
-            </div>
+            
+<!-- GESTIÓN MUNICIPAL -->
+{% if request.user.is_superuser or request.user.rol == 'ADMIN' %}
+    <div class="nav-section-title">
+        GESTIÓN MUNICIPAL
+    </div>
+{% endif %}
 
-            <!-- MÓDULOS ADMINISTRATIVOS -->
-            {% if request.user.is_superuser or request.user.rol == 'ADMIN' %}
+<!-- MÓDULOS ADMINISTRATIVOS -->
+{% if request.user.is_superuser or request.user.rol == 'ADMIN' %}
+
 
                 <!-- DELEGACIONES -->
                 <a
@@ -267,7 +271,7 @@
             <!-- INFORMACIÓN DE USUARIO -->
             <div class="topbar-right">
 
-                <div class="user-pill">
+                <a class="user-pill" href="{% url 'usuarios:mi_perfil' %}" title="Editar mi perfil" aria-label="Ver y editar mi perfil" style="text-decoration: none; color: inherit; cursor: pointer;">
 
                     <!-- AVATAR -->
                     <div class="user-avatar">
@@ -299,7 +303,7 @@
 
                     <i class="bi bi-person-check" aria-hidden="true"></i>
 
-                </div>
+                </a>
 
             </div>
 

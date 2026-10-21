@@ -5,6 +5,8 @@ from . import views
 app_name = "usuarios"
 
 urlpatterns = [
+    path("mi-perfil/", views.mi_perfil, name="mi_perfil"),
+    path("mi-perfil/contrasena/", views.cambiar_mi_password, name="cambiar_mi_password"),
     path(
         "",
         views.listar_usuarios,

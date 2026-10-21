@@ -9,7 +9,7 @@
 <div class="module-heading">
     <div>
         <h2>{{ titulo }}</h2>
-        <p>Complete los datos del funcionario municipal.</p>
+        <p>Registre los antecedentes del personal municipal, su cargo y delegación. Este módulo no crea cuentas de acceso al SGR.</p>
     </div>
 
     <a href="{% url 'funcionarios:listar' %}"
@@ -17,6 +17,12 @@
         <i class="bi bi-arrow-left"></i>
         Volver
     </a>
+</div>
+
+<div class="alert alert-info border-0 rounded-3 mb-4" role="note">
+    <i class="bi bi-info-circle me-2" aria-hidden="true"></i>
+    <strong>Registro de personal municipal:</strong> identifica al funcionario y su asignación institucional.
+    Las credenciales, roles y permisos se administran por separado en <strong>Usuarios</strong>.
 </div>
 
 <div class="panel-card module-form-card">
@@ -153,14 +159,16 @@
                 for="{{ formulario.usuario.id_for_label }}"
                 class="form-label fw-semibold"
             >
-                Cuenta de usuario
+                Cuenta de acceso al SGR (opcional)
             </label>
 
             {{ formulario.usuario }}
 
             <div class="form-text">
-                Este campo es opcional. Permite asociar
-                una cuenta existente al funcionario.
+                Seleccione una cuenta ya creada en el módulo Usuarios solamente si
+                este funcionario necesita acceder al SGR. Dejar «Sin cuenta asociada»
+                no impide registrar al funcionario y no crea credenciales nuevas.
+                Los datos de esta ficha no actualizan automáticamente los de la cuenta.
             </div>
 
             {% for error in formulario.usuario.errors %}

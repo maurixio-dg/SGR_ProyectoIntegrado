@@ -1,6 +1,8 @@
 
 from django.contrib import messages
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
+from django import forms
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
@@ -241,3 +243,45 @@ def activar_usuario(request, pk):
     )
 
     return redirect("usuarios:listar")
+
+
+# ==========================================
+# PERFIL PERSONAL (TODOS LOS USUARIOS)
+# ==========================================
+class PerfilForm(forms.ModelForm):
+    class Meta:
+        model = Usuario
+        fields = ["first_name", "last_name", "email"]
+        labels = {
+            "first_name": "Nombre",
+            "last_name": "Apellido",
+            "email": "Correo electrónico",
+        }
+        widgets = {
+            "first_name": forms.TextInput(attrs={"class": "form-control"}),
+            "last_name": forms.TextInput(attrs={"class": "form-control"}),
+            "email": forms.EmailInput(attrs={"class": "form-control"}),
+        }
+
+
+@login_required
+def mi_perfil(request):
+    formulario = PerfilForm(request.POST or None, instance=request.user)
+    if request.method == "POST" and formulario.is_valid():
+        formulario.save()
+        messages.success(request, "Tu perfil se actualizó correctamente.")
+        return redirect("usuarios:mi_perfil")
+    return render(request, "usuarios/mi_perfil.html", {"formulario": formulario})
+
+
+@login_required
+def cambiar_mi_password(request):
+    formulario = PasswordChangeForm(request.user, request.POST or None)
+    for campo in formulario.fields.values():
+        campo.widget.attrs["class"] = "form-control"
+    if request.method == "POST" and formulario.is_valid():
+        usuario = formulario.save()
+        update_session_auth_hash(request, usuario)
+        messages.success(request, "Contraseña actualizada correctamente.")
+        return redirect("usuarios:mi_perfil")
+    return render(request, "usuarios/cambiar_password.html", {"formulario": formulario})

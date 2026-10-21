@@ -10,8 +10,8 @@
     <div>
         <h2>Usuarios del sistema</h2>
         <p>
-            Administración de cuentas y perfiles
-            del Sistema de Gestión de Resultados.
+            Gestión de cuentas de acceso, roles y estado de los usuarios
+            autorizados para ingresar al SGR.
         </p>
     </div>
 
@@ -19,6 +19,16 @@
         <i class="bi bi-person-plus"></i>
         Nuevo usuario
     </a>
+</div>
+
+<!-- DIFERENCIA ENTRE CUENTAS DE ACCESO Y PERSONAL MUNICIPAL -->
+<div class="alert alert-info border-0 rounded-3 mb-4" role="note">
+    <i class="bi bi-shield-lock me-2" aria-hidden="true"></i>
+    <strong>Este módulo administra el acceso al SGR.</strong>
+    Aquí se crean cuentas, se asignan roles y se activan o desactivan accesos.
+    El registro de personal, sus cargos y delegaciones se gestiona en
+    <a href="{% url 'funcionarios:listar' %}" class="alert-link">Funcionarios municipales</a>.
+    No todo funcionario necesita una cuenta de acceso.
 </div>
 
 <!-- FILTROS -->
@@ -42,7 +52,7 @@
 
         <div class="col-md-4">
             <label for="rol" class="form-label fw-semibold">
-                Rol institucional
+                Rol de acceso
             </label>
             <select name="rol" id="rol" class="form-select">
                 <option value="">Todos los roles</option>
@@ -74,7 +84,7 @@
 <div class="panel-card">
 
     <div class="module-table-heading">
-        <h5>Usuarios registrados</h5>
+        <h5>Cuentas de acceso registradas</h5>
         <span class="record-count">
             {{ total }} resultado{{ total|pluralize }}
         </span>
