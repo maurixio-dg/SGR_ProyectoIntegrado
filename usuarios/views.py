@@ -245,23 +245,51 @@ def activar_usuario(request, pk):
     return redirect("usuarios:listar")
 
 
+
 # ==========================================
 # PERFIL PERSONAL (TODOS LOS USUARIOS)
 # ==========================================
+
 class PerfilForm(forms.ModelForm):
+
     class Meta:
         model = Usuario
+
         fields = ["first_name", "last_name", "email"]
+
         labels = {
             "first_name": "Nombre",
             "last_name": "Apellido",
             "email": "Correo electrónico",
         }
+
         widgets = {
-            "first_name": forms.TextInput(attrs={"class": "form-control"}),
-            "last_name": forms.TextInput(attrs={"class": "form-control"}),
-            "email": forms.EmailInput(attrs={"class": "form-control"}),
+            "first_name": forms.TextInput(
+                attrs={"class": "form-control"}
+            ),
+            "last_name": forms.TextInput(
+                attrs={"class": "form-control"}
+            ),
+            "email": forms.EmailInput(
+                attrs={"class": "form-control"}
+            ),
         }
+
+    def clean_email(self):
+        email = self.cleaned_data["email"].strip().lower()
+
+        existe = Usuario.objects.filter(
+            email__iexact=email
+        ).exclude(
+            pk=self.instance.pk
+        ).exists()
+
+        if existe:
+            raise forms.ValidationError(
+                "Este correo electrónico ya pertenece a otra cuenta."
+            )
+
+        return email
 
 
 @login_required
