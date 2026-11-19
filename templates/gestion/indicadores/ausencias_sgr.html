@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% block title %}Ausencias | SGR{% endblock %}
+{% block breadcrumb %}GESTIÓN OPERATIVA / INDICADORES / AUSENCIAS{% endblock %}
+{% block content %}
+<div class="module-heading"><div><h2>Ausencias</h2></div><div class="d-flex gap-2"><a class="btn btn-outline-secondary" href="{% url 'gestion:indicadores' %}">Indicadores</a>{% if puede_gestionar %}<a class="btn-muni" href="{% url 'gestion:registrar_ausencia_sgr' %}">Registrar ausencia</a>{% endif %}</div></div>
+<div class="panel-card"><div class="table-responsive"><table class="table table-hover sgr-table align-middle"><thead><tr><th>Funcionario</th><th>Período</th><th>Tipo</th><th>Desde</th><th>Hasta</th>{% if puede_gestionar %}<th></th>{% endif %}</tr></thead><tbody>{% for r in registros %}<tr><td>{{ r.funcionario.nombre }}</td><td>{{ r.periodo.nombre }}</td><td>{{ r.get_tipo_display }}</td><td>{{ r.fecha_inicio|date:'d/m/Y' }}</td><td>{{ r.fecha_fin|date:'d/m/Y' }}</td>{% if puede_gestionar %}<td><form method="post" action="{% url 'gestion:eliminar_ausencia_sgr' r.pk %}" onsubmit="return confirm('¿Eliminar ausencia?');">{% csrf_token %}<button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button></form></td>{% endif %}</tr>{% empty %}<tr><td colspan="6" class="text-muted">Sin ausencias registradas.</td></tr>{% endfor %}</tbody></table></div></div>
+{% endblock %}

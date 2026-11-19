@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}{{ titulo }} | SGR La Serena{% endblock %}
+{% block breadcrumb %}GESTIÓN MUNICIPAL / CATÁLOGOS DEL TUBO{% endblock %}
+{% block content %}
+<div class="module-heading"><div><h2>{{ titulo }}</h2><p>Catálogo de atención y clasificación municipal.</p></div><a class="btn-muni" href="{% url 'tubo:nuevo_catalogo' clase %}"><i class="bi bi-plus-circle"></i> Nuevo registro</a></div>
+<div class="panel-card"><div class="d-flex gap-2 flex-wrap mb-3"><a href="{% url 'tubo:catalogo' 'territorios' %}" class="btn btn-outline-secondary btn-sm">Territorios</a><a href="{% url 'tubo:catalogo' 'tipos' %}" class="btn btn-outline-secondary btn-sm">Tipos de atención</a><a href="{% url 'tubo:catalogo' 'subtipos' %}" class="btn btn-outline-secondary btn-sm">Subtipos</a></div>
+<div class="table-responsive"><table class="table sgr-table table-hover align-middle"><thead><tr><th>Registro</th><th>Acción</th></tr></thead><tbody>
+{% for r in registros %}<tr><td>{{ r }}</td><td><div class="d-flex flex-wrap gap-2"><a class="btn btn-outline-secondary btn-sm" href="{% url 'tubo:editar_catalogo' clase r.pk %}">Editar</a><form method="post" action="{% url 'tubo:eliminar_catalogo' clase r.pk %}" onsubmit="return confirm('¿Eliminar este registro? No será posible si está siendo utilizado.')">{% csrf_token %}<button class="btn btn-outline-danger btn-sm" type="submit">Eliminar</button></form></div></td></tr>{% empty %}<tr><td colspan="2" class="text-muted text-center">Sin registros.</td></tr>{% endfor %}
+</tbody></table></div></div>
+{% endblock %}

@@ -4,7 +4,14 @@ from django.urls import path, include
 from django.contrib.auth import views as auth_views
 
 
+from django.urls import include as sgr_include_organizaciones
+
+from django.urls import include as sgr_include_matriz_sgr
+
 urlpatterns = [
+    path('tubo/', include('tubo.urls')),
+    path('matriz-sgr/', sgr_include_matriz_sgr('matriz_sgr.urls')),
+    path('organizaciones/', sgr_include_organizaciones('organizaciones.urls')),
     # Administración interna
     path("admin/", admin.site.urls),
 

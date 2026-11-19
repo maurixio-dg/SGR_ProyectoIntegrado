@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Metas de matriz | SGR{% endblock %}
+{% block breadcrumb %}GESTIÓN OPERATIVA / MATRIZ SGR / METAS{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+  <div><h2 class="mb-1">Metas de la matriz</h2><p class="text-muted mb-0">{{ catalogo.nombre_archivo }}</p></div>
+  <div class="d-flex gap-2"><a class="btn btn-outline-secondary" href="{% url 'matriz_sgr:equivalencias' catalogo.pk %}">Cargos por hoja</a><a class="btn btn-outline-secondary" href="{% url 'matriz_sgr:catalogos' %}">Volver</a></div>
+</div>
+<div class="panel-card p-3 mb-3">
+<form method="get" class="row g-3 align-items-end">
+  <div class="col-lg-5"><label class="form-label">Hoja / cargo de origen</label><select class="form-select" name="hoja"><option value="">Todas</option>{% for h in hojas %}<option value="{{ h }}" {% if hoja_actual == h %}selected{% endif %}>{{ h }}</option>{% endfor %}</select></div>
+  <div class="col-lg-4"><label class="form-label">Tipo de meta</label><select class="form-select" name="clase"><option value="">Todos</option>{% for clave, etiqueta in clases %}<option value="{{ clave }}" {% if clase_actual == clave %}selected{% endif %}>{{ etiqueta }}</option>{% endfor %}</select></div>
+  <div class="col-lg-3"><button class="btn btn-outline-primary w-100" type="submit">Filtrar</button></div>
+</form>
+</div>
+<div class="panel-card p-3">
+<div class="d-flex justify-content-between mb-3"><h5 class="mb-0">Catálogo municipal</h5><span class="badge bg-secondary">{{ items|length }} de {{ total }}</span></div>
+<div class="table-responsive"><table class="table table-hover align-middle sgr-table"><thead><tr><th>Hoja</th><th>Ítem</th><th>Meta</th><th>Ponderación</th><th>Clase</th><th>Meta SGR</th><th></th></tr></thead><tbody>
+{% for item in items %}<tr>
+<td>{{ item.hoja }}</td><td><strong>{{ item.nombre }}</strong><div class="small text-muted">{{ item.celda_item }}</div></td>
+<td>{% if item.meta_original is not None %}{{ item.meta_original }}{% else %}—{% endif %}</td>
+<td>{% if item.ponderacion is not None %}{{ item.ponderacion }}%{% else %}—{% endif %}</td>
+<td>{{ item.get_clase_display }}</td>
+<td>{% for vinculo in item.vinculos.all %}<div>{{ vinculo.meta.nombre }}</div>{% empty %}<span class="text-muted">Sin vincular</span>{% endfor %}</td>
+<td>{% if item.es_vinculable %}<a class="btn btn-sm btn-outline-primary" href="{% url 'matriz_sgr:vincular' item.pk %}">Crear meta</a>
+{% elif item.clase == 'PORC' or item.clase == 'DIN' %}<a class="btn btn-sm btn-outline-primary" href="{% url 'matriz_sgr:especial_crear' item.pk %}">Medir</a>
+{% elif item.clase == 'ESP' %}<a class="btn btn-sm btn-outline-primary" href="{% url 'matriz_sgr:valoraciones' %}">Ver registros formales</a>{% else %}<span class="text-muted">Requiere revisión</span>{% endif %}</td>
+</tr>{% empty %}<tr><td colspan="7" class="text-center py-3 text-muted">Sin resultados para los filtros seleccionados.</td></tr>{% endfor %}
+</tbody></table></div></div>
+{% endblock %}

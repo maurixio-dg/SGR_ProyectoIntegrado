@@ -11,26 +11,47 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# SGR_CONFIG_ENTORNO_V1 — variables locales, fuera de Git
+# Las variables de entorno del proceso tienen prioridad sobre el archivo .env.
+_sgr_env_local = BASE_DIR / '.env'
+if _sgr_env_local.is_file():
+    for _sgr_line in _sgr_env_local.read_text(encoding='utf-8').splitlines():
+        _sgr_line = _sgr_line.strip()
+        if not _sgr_line or _sgr_line.startswith('#') or '=' not in _sgr_line:
+            continue
+        _sgr_key, _sgr_value = _sgr_line.split('=', 1)
+        _sgr_key = _sgr_key.strip()
+        if _sgr_key in {'DJANGO_SECRET_KEY', 'DJANGO_DEBUG', 'DJANGO_ALLOWED_HOSTS',
+                        'SGR_DB_NAME', 'SGR_DB_USER', 'SGR_DB_PASSWORD',
+                        'SGR_DB_HOST', 'SGR_DB_PORT'}:
+            os.environ.setdefault(_sgr_key, _sgr_value.strip())
+
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-ygqjhi2)m)&qu8zjbdaf1*qs5x+k*y_6n45xpm*zn)@g!g#bjp'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
+if not SECRET_KEY:
+    raise RuntimeError('Falta DJANGO_SECRET_KEY en el entorno o en .env')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', 'False').lower() in {'1', 'true', 'yes', 'on'}
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [h.strip() for h in os.environ.get('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost').split(',') if h.strip()]
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'matriz_sgr.apps.MatrizSGRConfig',
+    'organizaciones.apps.OrganizacionesConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -44,6 +65,7 @@ INSTALLED_APPS = [
     'funcionarios',
     'catalogos',
     'gestion',
+    'tubo.apps.TuboConfig',
 ]
 
 MIDDLEWARE = [
@@ -52,6 +74,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'usuarios.acceso_inicial_middleware.CambioPasswordInicialMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -82,11 +105,11 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'sgr_proyecto_integrado',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
+        'NAME': os.environ.get('SGR_DB_NAME', ''),
+        'USER': os.environ.get('SGR_DB_USER', ''),
+        'PASSWORD': os.environ.get('SGR_DB_PASSWORD', ''),
+        'HOST': os.environ.get('SGR_DB_HOST', '127.0.0.1'),
+        'PORT': os.environ.get('SGR_DB_PORT', '3306'),
     }
 }
 
@@ -130,10 +153,28 @@ STATICFILES_DIRS = [
 ]
 
 
-# Email - recuperación de contraseña en desarrollo local
-# El mensaje y el enlace se imprimen en la terminal, no se envían.
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-DEFAULT_FROM_EMAIL = 'SGR La Serena <noreply@localhost>'
+# SGR_EMAIL_RECUPERACION_REAL_V1
+# Console (predeterminado) o SMTP activado expresamente con variables de entorno.
+SGR_EMAIL_MODE = os.environ.get('SGR_EMAIL_MODE', 'console').lower().strip()
+EMAIL_HOST = os.environ.get('SGR_SMTP_HOST', 'smtp.gmail.com')
+EMAIL_PORT = int(os.environ.get('SGR_SMTP_PORT', '587'))
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+EMAIL_TIMEOUT = 20
+EMAIL_HOST_USER = os.environ.get('SGR_SMTP_USER', '').strip()
+EMAIL_HOST_PASSWORD = os.environ.get('SGR_SMTP_APP_PASSWORD', '')
+if SGR_EMAIL_MODE == 'smtp':
+    if not EMAIL_HOST_USER or not EMAIL_HOST_PASSWORD:
+        from django.core.exceptions import ImproperlyConfigured
+        raise ImproperlyConfigured('SMTP seleccionado sin usuario y contraseña de aplicación.')
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    DEFAULT_FROM_EMAIL = f'SGR - Entorno de pruebas <{EMAIL_HOST_USER}>'
+elif SGR_EMAIL_MODE == 'console':
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    DEFAULT_FROM_EMAIL = 'SGR - Entorno de pruebas <noreply@localhost>'
+else:
+    from django.core.exceptions import ImproperlyConfigured
+    raise ImproperlyConfigured('SGR_EMAIL_MODE debe ser console o smtp')
 PASSWORD_RESET_TIMEOUT = 1800  # 30 minutos
 
 
@@ -142,3 +183,6 @@ AUTH_USER_MODEL = 'usuarios.Usuario'
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/login/'
+
+# Evidencias de actividades: almacenamiento privado local.
+MEDIA_ROOT = BASE_DIR / "private_evidencias"

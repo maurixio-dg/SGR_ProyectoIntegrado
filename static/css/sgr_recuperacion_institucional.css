@@ -1,0 +1,53 @@
+/* Recuperación de contraseña — mismo lenguaje visual que el login institucional. */
+body.sgr-recovery-page {
+  background: #f2f4f7; min-height: 100vh;
+  color: #18283e; font-family: "Segoe UI", Arial, sans-serif;
+}
+body.sgr-recovery-page::before {
+  display: block; height: 7px; background: #a32035; content: "";
+}
+.sgr-recovery-page .login-page {
+  min-height: calc(100vh - 7px); padding: 36px 20px;
+  background: #f2f4f7;
+}
+.sgr-recovery-page .login-card {
+  max-width: 1000px; grid-template-columns: .95fr 1fr;
+  border: 1px solid #dfe5eb; border-radius: 12px;
+  box-shadow: 0 18px 48px rgba(18,37,57,.08);
+}
+.sgr-recovery-page .login-side-brand {
+  background: #faf7f6; color: #18283e;
+  border-right: 1px solid #eee0e0; padding: 48px;
+}
+.sgr-recovery-logo { width: 65px; height: 65px; object-fit: contain; margin-bottom: 28px; }
+.sgr-recovery-page .login-side-brand h2 {
+  font-size: clamp(26px,2.4vw,36px); line-height: 1.22;
+  font-weight: 750; letter-spacing: -.03em;
+}
+.sgr-recovery-page .login-side-brand p { color: #58677a; font-size: 15px; }
+.sgr-recovery-page .login-form-area { padding: 46px; }
+.sgr-recovery-page .login-form-area h3 {
+  font-size: 28px; font-weight: 750; color: #18283e;
+}
+.sgr-recovery-page .login-form-area p { color: #58677a; font-size: 14px; }
+.sgr-recovery-page .form-control {
+  border-radius: 7px; min-height: 47px; border: 1px solid #cfd7e0;
+  box-shadow: none; font-size: 14px;
+}
+.sgr-recovery-page .form-control:focus {
+  border-color: #a32035; box-shadow: 0 0 0 .2rem rgba(163,32,53,.13);
+}
+.sgr-recovery-page .btn-login {
+  min-height: 47px; background: #a32035; color: #fff;
+  border: 1px solid #a32035; border-radius: 7px;
+  padding: 12px; font-weight: 700; font-size: 14px;
+}
+.sgr-recovery-page .btn-login:hover { background: #87192e; color: #fff; }
+.sgr-recovery-page a:not(.btn) { color: #8c2034; }
+@media (max-width: 800px) {
+  .sgr-recovery-page .login-card { grid-template-columns: 1fr; }
+  .sgr-recovery-page .login-side-brand { padding: 28px 30px; border-right: 0; border-bottom: 1px solid #eee0e0; }
+  .sgr-recovery-logo { width: 50px; height: 50px; margin-bottom: 12px; }
+  .sgr-recovery-page .login-side-brand h2 { font-size: 25px; }
+  .sgr-recovery-page .login-form-area { padding: 32px 30px; }
+}

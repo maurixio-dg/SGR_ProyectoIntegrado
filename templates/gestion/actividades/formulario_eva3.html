@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}{{ titulo }} | SGR La Serena{% endblock %}
+{% block breadcrumb %}GESTIÓN / ACTIVIDADES{% endblock %}
+{% block content %}
+<div class="module-heading"><div><h2>{{ titulo }}</h2><p>Ingrese una actividad realmente ejecutada. La coordinación previa no genera puntuación.</p></div><a href="{% url 'gestion:listar_actividades' %}" class="btn btn-outline-secondary">Volver</a></div>
+<div class="panel-card module-form-card">
+  <form method="post" enctype="multipart/form-data" novalidate>{% csrf_token %}
+    {% if formulario.non_field_errors %}<div class="alert alert-danger">{{ formulario.non_field_errors }}</div>{% endif %}
+    <div class="row g-3">
+      {% for campo in formulario %}<div class="col-md-{% if campo.name == 'descripcion' or campo.name == 'accion_realizada' %}12{% else %}6{% endif %}">
+        {% if campo.field.widget.input_type == 'checkbox' %}<div class="form-check mt-4">{{ campo }}<label class="form-check-label" for="{{ campo.id_for_label }}">{{ campo.label }}</label></div>
+        {% else %}<label for="{{ campo.id_for_label }}" class="form-label fw-semibold">{{ campo.label }}</label>{{ campo }}{% endif %}
+        {% if campo.help_text %}<div class="form-text">{{ campo.help_text }}</div>{% endif %}
+        {% for error in campo.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+      </div>{% endfor %}
+    </div>
+    <div class="mt-4 d-flex gap-2"><button type="submit" class="btn-muni">Guardar actividad</button><a href="{% url 'gestion:listar_actividades' %}" class="btn btn-outline-secondary">Cancelar</a></div>
+  </form>
+</div>
+{% endblock %}

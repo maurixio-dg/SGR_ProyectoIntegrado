@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}Vecinos | SGR La Serena{% endblock %}
+{% block breadcrumb %}GESTIÓN MUNICIPAL / VECINOS{% endblock %}
+{% block content %}
+<div class="module-heading"><div><h2>Vecinos</h2><p>Registro de solicitantes asociado a las delegaciones.</p></div>{% if puede_crear %}<a class="btn-muni" href="{% url 'tubo:nuevo_vecino' %}"><i class="bi bi-person-plus"></i> Nuevo vecino</a>{% endif %}</div>
+<div class="panel-card mb-4"><form method="get" class="row g-3 align-items-end"><div class="col-md-9"><label class="form-label" for="buscar">Buscar por RUT, nombre o teléfono</label><input class="form-control" id="buscar" name="buscar" value="{{ buscar }}"></div><div class="col-md-3"><button class="btn btn-dark w-100" type="submit">Buscar</button></div></form></div>
+<div class="panel-card"><div class="table-responsive"><table class="table table-hover align-middle sgr-table"><thead><tr><th>Nombre</th><th>RUT</th><th>Teléfono</th><th>Delegación</th><th></th></tr></thead><tbody>
+{% for v in pagina %}<tr><td>{{ v.nombre }}</td><td>{{ v.rut }}</td><td>{{ v.telefono|default:'—' }}</td><td>{{ v.delegacion.nombre }}</td><td>{% if v.puede_editar_web %}<div class="d-flex flex-wrap gap-2"><a class="btn btn-outline-secondary btn-sm" href="{% url 'tubo:editar_vecino' v.pk %}">Editar</a><form method="post" action="{% url 'tubo:eliminar_vecino' v.pk %}" onsubmit="return confirm('¿Eliminar este vecino sin gestiones asociadas?')">{% csrf_token %}<button class="btn btn-outline-danger btn-sm" type="submit">Eliminar</button></form></div>{% endif %}</td></tr>{% empty %}<tr><td colspan="5" class="text-muted text-center">No hay vecinos registrados.</td></tr>{% endfor %}
+</tbody></table></div><p class="small text-muted">{{ pagina.paginator.count }} registros · Página {{ pagina.number }} de {{ pagina.paginator.num_pages }}</p>{% if pagina.has_previous %}<a href="?pagina={{ pagina.previous_page_number }}&buscar={{ buscar|urlencode }}">Anterior</a>{% endif %}{% if pagina.has_next %}<a class="ms-3" href="?pagina={{ pagina.next_page_number }}&buscar={{ buscar|urlencode }}">Siguiente</a>{% endif %}</div>
+{% endblock %}

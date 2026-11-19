@@ -1,0 +1,126 @@
+<section class="sgr-seguimiento" aria-labelledby="panel-seguimiento-titulo">
+  <div class="sgr-panel-cabecera">
+    <div>
+      <span class="sgr-etiqueta">CONTROL DE GESTIÓN</span>
+      <h3 id="panel-seguimiento-titulo">Panel de seguimiento</h3>
+      <p>{{ panel_ambito }} · Resultados y tendencias de los registros disponibles para tu perfil</p>
+    </div>
+  </div>
+
+  <form class="sgr-filtros-panel" method="get" action="{% url 'gestion:dashboard' %}" aria-label="Filtrar panel de seguimiento">
+    {% if panel_puede_delegacion %}
+    <label>Delegación
+      <select class="form-select" name="delegacion">
+        <option value="">Todas las delegaciones</option>
+        {% for delegacion in panel_delegaciones %}
+        <option value="{{ delegacion.pk }}" {% if panel_delegacion_id == delegacion.pk %}selected{% endif %}>{{ delegacion.nombre }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    {% endif %}
+    {% if panel_puede_funcionario %}
+    <label>Funcionario
+      <select class="form-select" name="funcionario">
+        <option value="">Todos los funcionarios autorizados</option>
+        {% for funcionario in panel_funcionarios %}
+        <option value="{{ funcionario.pk }}" {% if panel_funcionario_id == funcionario.pk %}selected{% endif %}>{{ funcionario.nombre }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    {% endif %}
+    <label>Período
+      <select class="form-select" name="periodo">
+        <option value="">Todos los períodos</option>
+        {% for periodo in panel_periodos %}
+        <option value="{{ periodo.pk }}" {% if panel_periodo_id == periodo.pk %}selected{% endif %}>{{ periodo.nombre }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <button class="btn btn-sgr-filtrar" type="submit">Filtrar</button>
+    <a class="btn btn-outline-secondary" href="{% url 'gestion:dashboard' %}">Limpiar</a>
+  </form>
+
+  <div class="sgr-panel-datos" aria-label="Resumen filtrado">
+    <div><span>Actividades</span><strong>{{ panel_total }}</strong></div>
+    <div><span>Aprobadas</span><strong>{{ panel_aprobadas }}</strong></div>
+    <div><span>Compromisos</span><strong>{{ panel_compromisos }}</strong></div>
+    <div><span>Metas activas del ámbito</span><strong>{{ panel_metas_total }}</strong></div>
+  </div>
+
+  <div class="sgr-panel-graficos">
+    <article class="sgr-panel-grafico">
+      <h4>Evolución de actividades</h4>
+      <p>Últimos seis meses del período visible</p>
+      <div class="sgr-barras-meses" role="img" aria-label="Actividades por mes">
+        {% for mes in panel_tendencia %}
+        <div class="sgr-barra-mes">
+          <strong>{{ mes.total }}</strong>
+          <div class="sgr-barra-pista"><div class="sgr-barra-relleno" style="height: {{ mes.altura }}%"></div></div>
+          <span>{{ mes.etiqueta }}</span>
+        </div>
+        {% endfor %}
+      </div>
+    </article>
+    <article class="sgr-panel-grafico">
+      <h4>Estados de actividades</h4>
+      <p>Distribución de los registros filtrados</p>
+      <div class="sgr-lista-barras">
+        {% for estado in panel_estados %}
+        <div>
+          <div class="sgr-valor-fila"><span>{{ estado.nombre }}</span><strong>{{ estado.total }}</strong></div>
+          <div class="sgr-pista"><div class="sgr-relleno estado-{{ estado.codigo }}" style="width: {{ estado.porcentaje }}%"></div></div>
+        </div>
+        {% endfor %}
+      </div>
+    </article>
+    <article class="sgr-panel-grafico">
+      <h4>{{ panel_comparativa_titulo }}</h4>
+      <p>Carga de trabajo y acciones aprobadas</p>
+      {% if panel_comparativa %}
+      <div class="sgr-lista-barras">
+        {% for fila in panel_comparativa %}
+        <div>
+          <div class="sgr-valor-fila"><span>{{ fila.nombre }}</span><strong>{{ fila.total }} · {{ fila.aprobadas }} aprobadas</strong></div>
+          <div class="sgr-pista"><div class="sgr-relleno" style="width: {{ fila.porcentaje }}%"></div></div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <p class="sgr-vacio">No hay actividades registradas para los filtros seleccionados.</p>
+      {% endif %}
+    </article>
+    <article class="sgr-panel-grafico">
+      <h4>Estado de compromisos</h4>
+      <p>Agenda colectiva</p>
+      <div class="sgr-lista-barras">
+        {% for estado in panel_agenda_estados %}
+        <div>
+          <div class="sgr-valor-fila"><span>{{ estado.nombre }}</span><strong>{{ estado.total }}</strong></div>
+          <div class="sgr-pista"><div class="sgr-relleno sgr-agenda" style="width: {{ estado.porcentaje }}%"></div></div>
+        </div>
+        {% endfor %}
+      </div>
+    </article>
+  </div>
+  <article class="sgr-panel-grafico sgr-semaforos">
+    <div class="sgr-panel-cabecera">
+      <div><h4>Semáforo de metas</h4><p>Avance individual o de delegación según el ámbito seleccionado</p></div>
+      <a class="btn btn-sm btn-outline-secondary" href="{% url 'gestion:indicadores' %}">Ver indicadores</a>
+    </div>
+    {% if panel_metas %}
+      <div class="sgr-lista-barras">
+        {% for meta in panel_metas %}
+        <div>
+          <div class="sgr-valor-fila"><span>{{ meta.nombre }}</span><strong>{{ meta.porcentaje|floatformat:1 }} % <small class="sgr-semaforo-{{ meta.estado }}">{{ meta.estado }}</small></strong></div>
+          <div class="sgr-pista"><div class="sgr-relleno semaforo-{{ meta.estado }}" style="width: {{ meta.ancho }}%"></div></div>
+          <div class="sgr-leyenda">{{ meta.cantidad }} aprobadas elegibles · Meta ajustada: {{ meta.meta_ajustada }}</div>
+        </div>
+        {% endfor %}
+      </div>
+      {% if panel_metas_total > 6 %}<p class="sgr-leyenda mt-2">Mostrando 6 de {{ panel_metas_total }} metas. Consulta el resto en Indicadores.</p>{% endif %}
+    {% else %}
+      <p class="sgr-vacio">No hay metas asignadas para este ámbito y período.</p>
+    {% endif %}
+  </article>
+  <p class="sgr-leyenda sgr-panel-nota">Los gráficos y sus filtros se aplican a esta sección. Los indicadores superiores mantienen el resumen habitual del usuario. Las metas individuales requieren asignación explícita.</p>
+</section>

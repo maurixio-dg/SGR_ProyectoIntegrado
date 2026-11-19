@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Indicadores | SGR La Serena{% endblock %}
+{% block breadcrumb %}GESTIÓN OPERATIVA / INDICADORES{% endblock %}
+{% block content %}
+<div class="module-heading"><div><h2>Indicadores y semáforos</h2></div><div class="d-flex flex-wrap gap-2">{% if request.user.is_superuser or request.user.rol == 'ADMIN' %}<a class="btn btn-outline-secondary" href="{% url 'matriz_sgr:especiales' %}">Mediciones especiales</a>{% endif %}{% if puede_gestionar %}<a href="{% url 'gestion:auditoria_ponderaciones' %}" class="btn btn-outline-secondary">Auditoría de ponderaciones</a>{% endif %}<a href="{% url 'gestion:ausencias_sgr' %}" class="btn btn-outline-secondary">Ausencias</a>{% if puede_gestionar %}<a class="btn-muni" href="{% url 'gestion:nueva_meta' %}">Nueva meta</a>{% endif %}</div></div>
+<div class="panel-card mb-4"><form method="get" class="row g-3 align-items-end"><div class="col-md-5"><label class="form-label" for="f-periodo">Período</label><select class="form-select" id="f-periodo" name="periodo"><option value="">Todos</option>{% for p in periodos %}<option value="{{ p.pk }}" {% if periodo_actual == p.pk|stringformat:'s' %}selected{% endif %}>{{ p.nombre }}</option>{% endfor %}</select></div><div class="col-md-5"><label class="form-label" for="f-delegacion">Delegación</label><select class="form-select" id="f-delegacion" name="delegacion"><option value="">Todas</option>{% for d in delegaciones %}<option value="{{ d.pk }}" {% if delegacion_actual == d.pk|stringformat:'s' %}selected{% endif %}>{{ d.nombre }}</option>{% endfor %}</select></div><div class="col-md-2"><button type="submit" class="btn btn-dark w-100">Filtrar</button></div></form></div>
+<div class="panel-card"><div class="table-responsive"><table class="table table-hover align-middle sgr-table"><thead><tr><th>Ítem / meta</th><th>Responsable</th><th>Avance</th><th>Meta ajustada</th><th>Cumplimiento</th><th>Esperado</th><th>Ponderador</th><th>Aporte</th><th>Semáforo</th>{% if puede_gestionar %}<th></th>{% endif %}</tr></thead><tbody>
+{% for r in resumenes %}
+<tr><td><strong>{{ r.meta.nombre }}</strong><div class="small text-muted">{{ r.meta.delegacion.nombre }} · {{ r.meta.periodo.nombre }}</div></td>
+<td>{% if r.configuracion and r.configuracion.funcionario %}{{ r.configuracion.funcionario.nombre }}{% elif r.configuracion and r.configuracion.cargo %}{{ r.configuracion.cargo.nombre_cargo }}{% else %}Delegación{% endif %}</td>
+<td>{{ r.cantidad }}</td><td>{{ r.meta_ajustada }}</td>
+<td><strong>{{ r.porcentaje }}%</strong><div class="progress mt-1" role="progressbar" aria-valuenow="{{ r.porcentaje }}" aria-valuemin="0" aria-valuemax="{{ r.tope }}"><div class="progress-bar" style="width:{% widthratio r.porcentaje r.tope 100 %}%"></div></div></td>
+<td>{{ r.esperado }}%</td><td>{{ r.meta.ponderacion }}%</td><td>{{ r.aporte_ponderado }}</td>
+<td>{% if r.semaforo == 'VERDE' %}<span class="badge bg-success">Verde</span>{% elif r.semaforo == 'AMBAR' %}<span class="badge bg-warning text-dark">Ámbar</span>{% elif r.semaforo == 'ROJO' %}<span class="badge bg-danger">Rojo</span>{% else %}<span class="badge bg-secondary">Pendiente</span>{% endif %}</td>
+{% if puede_gestionar %}<td><div class="d-flex gap-2"><a class="btn btn-sm btn-outline-primary" href="{% url 'gestion:editar_meta' r.meta.pk %}">Editar</a><a class="btn btn-sm btn-outline-secondary" href="{% url 'gestion:configurar_meta_sgr' r.meta.pk %}">Configurar</a></div></td>{% endif %}</tr>
+{% empty %}<tr><td colspan="10" class="text-center text-muted">Sin metas registradas.</td></tr>{% endfor %}
+</tbody></table></div></div>
+{% endblock %}

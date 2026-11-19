@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}{{ titulo }} | SGR La Serena{% endblock %}
+{% block breadcrumb %}GESTIÓN OPERATIVA / TUBO{% endblock %}
+{% block content %}
+<div class="module-heading"><div><h2>{{ titulo }}</h2><p>Complete la información y revise las validaciones antes de guardar.</p></div></div>
+<div class="panel-card tubo-form-card">
+  <form method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    {% if formulario.non_field_errors %}<div class="alert alert-danger">{{ formulario.non_field_errors }}</div>{% endif %}
+    <div class="row g-3">
+      {% for campo in formulario %}
+      <div class="{% if campo.field.widget.input_type == 'checkbox' %}col-12{% else %}col-lg-6{% endif %}">
+        {% if campo.field.widget.input_type == 'checkbox' %}
+          <div class="form-check mt-3">{{ campo }}<label class="form-check-label" for="{{ campo.id_for_label }}">{{ campo.label }}</label></div>
+        {% else %}
+          <label class="form-label" for="{{ campo.id_for_label }}">{{ campo.label }}{% if campo.field.required %} <span class="text-danger">*</span>{% endif %}</label>
+          {{ campo }}
+        {% endif %}
+        {% for error in campo.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+        {% if campo.help_text %}<div class="form-text">{{ campo.help_text }}</div>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    <div class="d-flex gap-2 flex-wrap mt-4">
+      <button class="btn-muni" type="submit"><i class="bi bi-check-circle"></i> Guardar</button>
+      {% if volver_catalogo %}<a href="{% url 'tubo:catalogo' volver_catalogo %}" class="btn btn-outline-secondary">Cancelar</a>{% elif volver %}<a href="{% url volver %}" class="btn btn-outline-secondary">Cancelar</a>{% endif %}
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(() => {
+  const tipo=document.getElementById('id_tipo');
+  const subtipo=document.getElementById('id_subtipo');
+  if (!tipo || !subtipo) return;
+  tipo.addEventListener('change', async () => {
+    subtipo.innerHTML='<option value="">Seleccione un subtipo (opcional)</option>';
+    if (!tipo.value) return;
+    try {
+      const response=await fetch(`{% url 'tubo:subtipos_por_tipo' %}?tipo=${encodeURIComponent(tipo.value)}`);
+      if (!response.ok) return;
+      const data=await response.json();
+      for (const item of data.resultados) {
+        const option=document.createElement('option'); option.value=item.id; option.textContent=item.nombre;
+        subtipo.appendChild(option);
+      }
+    } catch (_) { /* Formulario funciona sin autocompletar. */ }
+  });
+})();
+</script>
+{% endblock %}

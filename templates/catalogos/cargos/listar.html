@@ -72,7 +72,6 @@
 
             <thead>
                 <tr>
-                    <th>ID</th>
                     <th>Nombre del cargo</th>
                     <th>Descripción</th>
                     <th class="text-end">Acciones</th>
@@ -83,8 +82,6 @@
                 {% for cargo in cargos %}
 
                 <tr>
-                    <td>{{ cargo.id }}</td>
-
                     <td>
                         <strong>{{ cargo.nombre_cargo }}</strong>
                     </td>
@@ -113,7 +110,7 @@
                 {% empty %}
 
                 <tr>
-                    <td colspan="4">
+                    <td colspan="3">
                         <div class="module-empty">
                             <i class="bi bi-briefcase"></i>
                             <h5>No se encontraron cargos</h5>

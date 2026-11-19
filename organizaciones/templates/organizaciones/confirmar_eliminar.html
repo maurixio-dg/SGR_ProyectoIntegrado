@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block title %}Eliminar organización | SGR{% endblock %}
+{% block breadcrumb %}ORGANIZACIONES COMUNITARIAS{% endblock %}
+{% block content %}
+<h2 class="mb-4">Eliminar organización</h2>
+<div class="panel-card p-4"><p>¿Confirmas la eliminación de <strong>{{ registro.nombre }}</strong>?</p>
+<form method="post">{% csrf_token %}<button type="submit" class="btn btn-danger">Sí, eliminar</button> <a href="{% url 'organizaciones:listar' %}" class="btn btn-outline-secondary">Cancelar</a></form></div>
+{% endblock %}

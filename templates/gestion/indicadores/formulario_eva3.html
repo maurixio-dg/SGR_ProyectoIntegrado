@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% block title %}{{ titulo }} | SGR{% endblock %}
+{% block breadcrumb %}GESTIÓN OPERATIVA / INDICADORES{% endblock %}
+{% block content %}
+<div class="module-heading"><h2>{{ titulo }}</h2><a href="{% url 'gestion:indicadores' %}" class="btn btn-outline-secondary">Volver</a></div>
+<div class="panel-card"><form method="post" novalidate>{% csrf_token %}{{ formulario.non_field_errors }}<div class="row g-3">{% for campo in formulario %}<div class="col-md-6"><label class="form-label" for="{{ campo.id_for_label }}">{{ campo.label }}</label>{{ campo }}{% if campo.errors %}<div class="text-danger small">{{ campo.errors }}</div>{% endif %}{% if campo.help_text %}<div class="form-text">{{ campo.help_text }}</div>{% endif %}</div>{% endfor %}</div><button class="btn btn-danger mt-4" type="submit">Guardar meta</button></form></div>
+{% endblock %}

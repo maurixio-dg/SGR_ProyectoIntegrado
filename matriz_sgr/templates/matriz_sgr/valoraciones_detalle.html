@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Revisión documental | SGR{% endblock %}
+{% block breadcrumb %}GESTIÓN OPERATIVA / MATRIZ SGR / REVISIÓN DOCUMENTAL{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+ <div><h2 class="mb-1">{{ registro.item.nombre }}</h2><p class="text-muted mb-0">{{ registro.referencia }} · {{ registro.item.hoja }} · {{ registro.get_estado_display }}</p></div>
+ <a class="btn btn-outline-secondary" href="{% url 'matriz_sgr:valoraciones' %}">Volver al listado</a>
+</div>
+<div class="alert alert-info">Ponderación del Excel: <strong>{{ registro.item.ponderacion }}%</strong> (referencia, no aplicada). La validación del documento no cambia el puntaje del SGR.</div>
+<div class="panel-card p-4 mb-3" style="max-width:1050px">
+<div class="row g-3">
+ <div class="col-md-6"><strong>Delegación:</strong> {{ registro.delegacion }}</div>
+ <div class="col-md-6"><strong>Período:</strong> {{ registro.periodo }}</div>
+ <div class="col-md-6"><strong>Fecha del documento:</strong> {{ registro.fecha_documento|date:'d/m/Y' }}</div>
+ <div class="col-md-6"><strong>Remitente:</strong> {{ registro.remitente }}</div>
+ <div class="col-md-6"><strong>Medio:</strong> {{ registro.get_medio_display }}</div>
+ <div class="col-md-6"><strong>Destinatario:</strong> {{ registro.funcionario|default:'Delegación / equipo' }}</div>
+ <div class="col-12"><strong>Informado por:</strong> {{ registro.informado_por.username }}</div>
+ <div class="col-12"><strong>Descripción:</strong><p class="mt-2">{{ registro.descripcion|linebreaksbr }}</p></div>
+ <div class="col-12"><a class="btn btn-outline-secondary" href="{% url 'matriz_sgr:valoracion_respaldo' registro.pk %}">Descargar respaldo formal</a></div>
+ {% if registro.observacion_revision %}<div class="col-12"><strong>Revisión:</strong><p>{{ registro.observacion_revision|linebreaksbr }}</p></div>{% endif %}
+</div></div>
+{% if puede_revisar %}<div class="panel-card p-4 mb-3" style="max-width:1050px"><h4>Revisión administrativa</h4>
+<form method="post" novalidate>{% csrf_token %}{{ form.non_field_errors }}
+{% for f in form %}<div class="mb-3"><label class="form-label" for="{{ f.id_for_label }}">{{ f.label }}</label>{{ f }}
+{% for e in f.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}</div>{% endfor %}
+<button class="btn btn-primary" type="submit">Guardar revisión</button></form></div>{% endif %}
+<div class="panel-card p-4" style="max-width:1050px"><h4>Historial</h4><ul class="list-group list-group-flush">
+{% for h in historial %}<li class="list-group-item"><strong>{{ h.get_accion_display|default:h.accion }}</strong> · {{ h.fecha|date:'d/m/Y H:i' }} · {{ h.usuario.username }}<p class="mb-0 text-muted">{{ h.detalle }}</p></li>
+{% empty %}<li class="list-group-item text-muted">Sin eventos registrados.</li>{% endfor %}
+</ul></div>
+{% endblock %}

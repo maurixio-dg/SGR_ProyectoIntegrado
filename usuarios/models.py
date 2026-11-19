@@ -19,6 +19,8 @@ class Usuario(AbstractUser):
         default=Rol.FUNCIONARIO
     )
 
+    debe_cambiar_password = models.BooleanField(default=False, verbose_name="Cambio de contraseña pendiente")
+
     class Meta:
         verbose_name = "Usuario"
         verbose_name_plural = "Usuarios"

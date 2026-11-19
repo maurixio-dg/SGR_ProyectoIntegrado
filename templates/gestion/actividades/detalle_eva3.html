@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Detalle de actividad | SGR La Serena{% endblock %}
+{% block breadcrumb %}GESTIÓN / ACTIVIDADES / DETALLE{% endblock %}
+{% block content %}
+<div class="module-heading">
+  <div>
+    <h2>Detalle de actividad</h2>
+    <p>{{ actividad.codigo }} · {{ actividad.get_estado_display }}</p>
+  </div>
+  <div class="d-flex gap-2 flex-wrap">
+    {% if puede_editar %}
+    <a href="{% url 'gestion:editar_actividad' actividad.pk %}" class="btn btn-outline-primary">Editar</a>
+    {% endif %}
+    <a href="{% url 'gestion:listar_actividades' %}" class="btn btn-outline-secondary">Volver a Actividades</a>
+  </div>
+</div>
+
+<div class="panel-card mb-4">
+  <h4 class="mb-3">Información de la actividad</h4>
+  <div class="row g-3">
+    <div class="col-md-6"><div class="text-muted small">Código</div><div class="fw-semibold">{{ actividad.codigo }}</div></div>
+    <div class="col-md-6"><div class="text-muted small">Estado</div><div class="fw-semibold">{{ actividad.get_estado_display }}</div></div>
+    <div class="col-md-6"><div class="text-muted small">Fecha</div><div>{{ actividad.fecha_actividad|date:"d/m/Y" }}</div></div>
+    <div class="col-md-6"><div class="text-muted small">Período de medición</div><div>{{ actividad.periodo.nombre|default:"Sin asignar" }}</div></div>
+    <div class="col-md-6"><div class="text-muted small">Delegación</div><div>{{ actividad.delegacion.nombre }}</div></div>
+    <div class="col-md-6"><div class="text-muted small">Funcionario responsable</div><div>{{ actividad.funcionario.nombre }}</div></div>
+    <div class="col-md-6"><div class="text-muted small">Tipo de acción</div><div>{{ actividad.get_tipo_accion_display }}</div></div>
+    <div class="col-md-6"><div class="text-muted small">Persona solicitante</div><div>{{ actividad.nombre_solicitante|default:"No informada" }}</div></div>
+    <div class="col-md-6"><div class="text-muted small">Teléfono solicitante</div><div>{{ actividad.telefono_solicitante|default:"No informado" }}</div></div>
+    <div class="col-md-6"><div class="text-muted small">Solicitante es delegado</div><div>{% if actividad.solicitante_es_delegado %}Sí{% else %}No{% endif %}</div></div>
+    <div class="col-12"><div class="text-muted small">Actividad o solicitud</div><div class="fw-semibold">{{ actividad.titulo }}</div></div>
+    <div class="col-12"><div class="text-muted small">Descripción</div><div>{{ actividad.descripcion|default:"Sin descripción"|linebreaksbr }}</div></div>
+    <div class="col-12"><div class="text-muted small">Acción realizada</div><div>{{ actividad.accion_realizada|linebreaksbr }}</div></div>
+    <div class="col-12"><div class="text-muted small">Evidencia</div>
+      {% if actividad.evidencia %}
+      <a href="{% url 'gestion:descargar_evidencia_actividad' actividad.pk %}" class="btn btn-outline-primary btn-sm">Descargar evidencia</a>
+      {% else %}Sin archivo adjunto{% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="panel-card mb-4">
+  <h4 class="mb-3">Validación y medición</h4>
+  <div class="row g-3">
+    <div class="col-md-6"><div class="text-muted small">Meta vinculada</div>
+      <div>{% if asignacion %}{{ asignacion.meta.nombre }}{% else %}Sin asignación{% endif %}</div>
+    </div>
+    <div class="col-md-6"><div class="text-muted small">Elegible para puntuación</div><div>{% if actividad.elegible_para_puntaje %}Sí{% else %}No{% endif %}</div></div>
+    {% if revision %}
+    <div class="col-md-6"><div class="text-muted small">Última decisión</div><div>{{ revision.get_decision_display }}</div></div>
+    <div class="col-md-6"><div class="text-muted small">Fecha de revisión</div><div>{{ revision.fecha|date:"d/m/Y H:i" }}</div></div>
+    <div class="col-md-6"><div class="text-muted small">Revisado por</div><div>{{ revision.revisor }}</div></div>
+    <div class="col-12"><div class="text-muted small">Observación</div><div>{{ revision.observacion|default:"Sin observación"|linebreaksbr }}</div></div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

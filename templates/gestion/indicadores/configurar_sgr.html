@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}Configurar meta | SGR{% endblock %}
+{% block breadcrumb %}GESTIÓN OPERATIVA / INDICADORES{% endblock %}
+{% block content %}
+<div class="module-heading"><div><h2>Configuración de meta</h2><p>{{ meta.nombre }} · {{ meta.delegacion.nombre }}</p></div><a href="{% url 'gestion:indicadores' %}" class="btn btn-outline-secondary">Volver</a></div>
+<div class="alert alert-info">Compruebe que el cargo y la función coincidan con el funcionario. Si la meta procede de la matriz,
+solo se admite el cargo asociado a su hoja de origen. La suma base por funcionario o cargo y período no puede superar 100%.</div>
+<div class="panel-card"><form method="post" novalidate>{% csrf_token %}{% if formulario.non_field_errors %}<div class="alert alert-danger">{{ formulario.non_field_errors }}</div>{% endif %}<div class="row g-3">{% for campo in formulario %}<div class="col-md-6"><label class="form-label" for="{{ campo.id_for_label }}">{{ campo.label }}</label>{{ campo }}{% for error in campo.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}</div>{% endfor %}</div><div class="mt-4 d-flex gap-2"><button type="submit" class="btn-muni">Guardar</button><a href="{% url 'gestion:indicadores' %}" class="btn btn-outline-secondary">Cancelar</a></div></form></div>
+{% endblock %}

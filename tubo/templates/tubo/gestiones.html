@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Tubo de seguimiento | SGR La Serena{% endblock %}
+{% block breadcrumb %}GESTIÓN OPERATIVA / TUBO DE SEGUIMIENTO{% endblock %}
+{% block content %}
+<div class="module-heading">
+  <div><h2>Tubo de seguimiento</h2><p>Solicitudes y gestiones sociales de las delegaciones municipales.</p></div>
+  {% if puede_crear %}<a class="btn-muni" href="{% url 'tubo:nueva_gestion' %}"><i class="bi bi-plus-circle"></i> Nueva gestión</a>{% endif %}
+</div>
+<div class="panel-card mb-4">
+  <form method="get" id="filtros-tubo" class="row g-3 align-items-end" role="search">
+    <div class="col-lg-5"><label class="form-label" for="buscar-tubo">Buscar por código, RUT o nombre</label><input id="buscar-tubo" class="form-control" name="buscar" value="{{ buscar }}" autocomplete="off" placeholder="SGR-TUB-000001, RUT o nombre"></div>
+    <div class="col-lg-3"><label for="estado" class="form-label">Estado</label><select id="estado" class="form-select" name="estado"><option value="">Todos</option>{% for k,v in estados %}<option value="{{ k }}" {% if estado == k %}selected{% endif %}>{{ v }}</option>{% endfor %}</select></div>
+    <div class="col-lg-2"><label for="desde" class="form-label">Desde</label><input class="form-control" type="date" name="desde" id="desde" value="{{ desde }}"></div>
+    <div class="col-lg-2"><label for="hasta" class="form-label">Hasta</label><input class="form-control" type="date" name="hasta" id="hasta" value="{{ hasta }}"></div>
+    <div class="col-lg-5"><label for="responsable" class="form-label">Funcionario responsable</label><select id="responsable" class="form-select" name="responsable"><option value="">Todos</option>{% for f in responsables %}<option value="{{ f.pk }}" {% if responsable == f.pk|stringformat:'s' %}selected{% endif %}>{{ f.nombre }}</option>{% endfor %}</select></div>
+    <div class="col-lg-4"><label for="en_tubo" class="form-label">Ingreso al Tubo</label><select id="en_tubo" class="form-select" name="en_tubo"><option value="">Todas las gestiones</option><option value="si" {% if en_tubo == 'si' %}selected{% endif %}>Ingresadas al Tubo</option><option value="no" {% if en_tubo == 'no' %}selected{% endif %}>Fuera del Tubo</option></select></div>
+    <div class="col-lg-3 d-flex gap-2"><button class="btn btn-dark w-100" type="submit">Filtrar</button><a class="btn btn-outline-secondary" href="{% url 'tubo:gestiones' %}">Limpiar</a></div>
+  </form>
+</div>
+<div class="panel-card" id="tubo-tabla" aria-live="polite">
+  {% include 'tubo/_filas_gestiones.html' %}
+</div>
+{% endblock %}
+{% block scripts %}<script src="{% static 'tubo/busqueda.js' %}" defer></script>{% endblock %}

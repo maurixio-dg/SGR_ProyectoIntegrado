@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Registrar documento formal | SGR{% endblock %}
+{% block breadcrumb %}GESTIÓN OPERATIVA / MATRIZ SGR / INGRESO DE DOCUMENTO{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+ <div><h2 class="mb-1">Registrar felicitación o reclamo</h2><p class="text-muted mb-0">Delegación: {{ delegacion }}</p></div>
+ <a class="btn btn-outline-secondary" href="{% url 'matriz_sgr:valoraciones' %}">Volver</a>
+</div>
+<div class="alert alert-info">Solo el delegado autorizado registra estos antecedentes. Una felicitación dirigida directamente al funcionario por mensaje no es válida; debe existir recepción formal y respaldo.</div>
+<div class="panel-card p-4" style="max-width:1000px">
+<form method="post" enctype="multipart/form-data" novalidate>{% csrf_token %}
+{{ form.non_field_errors }}
+<div class="row g-3">
+{% for f in form %}<div class="col-md-6 {% if f.name == 'descripcion' %}col-12{% endif %}">
+<label class="form-label" for="{{ f.id_for_label }}">{{ f.label }}</label>{{ f }}
+{% if f.help_text %}<div class="small text-muted">{{ f.help_text }}</div>{% endif %}
+{% for error in f.errors %}<div class="small text-danger">{{ error }}</div>{% endfor %}
+</div>{% endfor %}
+</div>
+<p class="text-muted small mt-3">El documento quedará pendiente de revisión administrativa. No se sumarán ni restarán puntos automáticamente.</p>
+<div class="d-flex gap-2 mt-4"><button class="btn btn-primary" type="submit">Registrar para revisión</button>
+<a class="btn btn-outline-secondary" href="{% url 'matriz_sgr:valoraciones' %}">Cancelar</a></div>
+</form></div>
+{% endblock %}

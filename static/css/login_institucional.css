@@ -1,0 +1,137 @@
+/* SGR · Acceso institucional: estilos exclusivos de la pantalla de ingreso.
+   No altera el CSS de dashboard, módulos ni formularios administrativos. */
+:root {
+  --sgr-login-red: #a32035;
+  --sgr-login-red-deep: #87192e;
+  --sgr-login-ink: #18283e;
+  --sgr-login-muted: #58677a;
+  --sgr-login-line: #e0e5eb;
+}
+html { min-height: 100%; }
+body.sgr-login-page {
+  min-height: 100vh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  background: #f2f4f7;
+  color: var(--sgr-login-ink);
+  font-family: "Segoe UI", Arial, sans-serif;
+  font-size: 15px;
+}
+.sgr-login-topline { height: 7px; background: var(--sgr-login-red); flex: none; }
+.sgr-login-header {
+  width: 100%; background: #fff; border-bottom: 1px solid var(--sgr-login-line);
+}
+.sgr-login-header-inner {
+  max-width: 1230px; margin: 0 auto; padding: 19px 32px;
+  display: flex; justify-content: space-between; align-items: center; gap: 24px;
+}
+.sgr-login-brand { display: flex; align-items: center; gap: 16px; min-width: 0; }
+.sgr-login-logo {
+  width: 64px; height: 64px; object-fit: contain; flex: none;
+  border-radius: 10px;
+}
+.sgr-login-brand-copy { display: flex; flex-direction: column; gap: 5px; }
+.sgr-login-brand-name { font-size: 18px; font-weight: 750; color: #19283c; line-height: 1.25; }
+.sgr-login-brand-unit { color: var(--sgr-login-muted); font-size: 13px; }
+.sgr-login-header-tag {
+  white-space: nowrap; border: 1px solid #e8d5d9; background: #fcf8f8;
+  border-radius: 5px; padding: 9px 14px; font-weight: 650;
+  color: var(--sgr-login-red-deep); font-size: 12px; letter-spacing: .02em;
+}
+.sgr-login-main {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  width: 100%; padding: 44px 30px 54px;
+}
+.sgr-login-shell {
+  width: 100%; max-width: 1100px; display: grid; grid-template-columns: .98fr 1fr;
+  border: 1px solid #dbe0e6; border-radius: 12px; overflow: hidden;
+  background: #fff; box-shadow: 0 18px 48px rgba(18,37,57,.08);
+}
+.sgr-login-intro {
+  display: flex; flex-direction: column; min-height: 510px;
+  padding: 56px 52px 42px; background: #faf7f6; border-right: 1px solid #eee0e0;
+}
+.sgr-login-kicker { font-size: 11px; font-weight: 750; color: var(--sgr-login-red-deep); letter-spacing: .13em; }
+.sgr-login-rule { margin: 30px 0 25px; width: 48px; height: 4px; background: var(--sgr-login-red); }
+.sgr-login-intro h1 {
+  font-size: clamp(29px, 3vw, 42px); font-weight: 750; line-height: 1.16;
+  color: var(--sgr-login-ink); margin: 0 0 22px; letter-spacing: -.035em;
+}
+.sgr-login-description { font-size: 16px; line-height: 1.8; color: #506075; margin: 0; max-width: 410px; }
+.sgr-login-intro-bottom {
+  margin-top: auto; padding-top: 35px; display: flex; align-items: center;
+  gap: 13px; color: #637081; font-size: 12px; line-height: 1.5;
+}
+.sgr-login-intro-icon {
+  background: #f1e4e5; color: var(--sgr-login-red-deep); border: 1px solid #e4cccf;
+  padding: 10px 8px; min-width: 50px; font-weight: 800; font-size: 11px;
+  border-radius: 6px; text-align: center;
+}
+.sgr-login-form-area {
+  padding: 55px 56px 42px; display: flex; flex-direction: column; justify-content: center;
+}
+.sgr-login-form-eyebrow { color: var(--sgr-login-red-deep); font-weight: 700; font-size: 10px; letter-spacing: .105em; }
+.sgr-login-form-area h2 { font-size: 30px; font-weight: 750; margin: 13px 0 9px; letter-spacing: -.025em; }
+.sgr-login-form-description { color: var(--sgr-login-muted); margin: 0 0 30px; font-size: 14px; line-height: 1.5; }
+.sgr-login-field { margin-bottom: 21px; }
+.sgr-login-field label { display: block; color: #22334a; font-weight: 650; font-size: 14px; margin-bottom: 9px; }
+.sgr-login-field input {
+  display: block; width: 100%; min-height: 49px; border: 1px solid #cdd6df; border-radius: 7px;
+  padding: 12px 15px; background: white; color: #18283e; font-size: 15px;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+.sgr-login-field input:focus {
+  outline: none; border-color: var(--sgr-login-red);
+  box-shadow: 0 0 0 3px rgba(163,32,53,.13);
+}
+.sgr-login-assistance { text-align: right; margin: -4px 0 25px; }
+.sgr-login-assistance a { color: var(--sgr-login-red-deep); font-size: 13px; font-weight: 650; text-decoration: underline; text-underline-offset: 3px; }
+.sgr-login-assistance a:hover { color: #6f1325; }
+.sgr-login-submit {
+  background: var(--sgr-login-red); color: #fff; border: 1px solid var(--sgr-login-red);
+  border-radius: 7px; display: block; width: 100%; min-height: 52px;
+  padding: 11px 16px; font-size: 15px; font-weight: 700; cursor: pointer;
+  transition: background-color .15s ease;
+}
+.sgr-login-submit:hover { background: var(--sgr-login-red-deep); }
+.sgr-login-submit:focus-visible, .sgr-login-assistance a:focus-visible {
+  outline: 3px solid #d88a98; outline-offset: 3px;
+}
+.sgr-login-help { color: #778392; font-size: 12px; line-height: 1.55; margin: 23px 0 0; }
+.sgr-login-alert {
+  border-radius: 6px; border: 1px solid #ebc1c7; color: #792036;
+  background: #fff0f2; padding: 12px 14px; font-size: 13px; margin: 0 0 18px;
+}
+.sgr-login-footer {
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 12px; padding: 16px max(30px, calc((100vw - 1166px)/2));
+  font-size: 12px; color: #667789; border-top: 1px solid #e2e6eb;
+}
+@media (max-width: 850px) {
+  .sgr-login-main { padding: 28px 18px; }
+  .sgr-login-shell { max-width: 620px; grid-template-columns: 1fr; }
+  .sgr-login-intro { min-height: 0; padding: 31px 38px; border-right: 0; border-bottom: 1px solid #eee0e0; }
+  .sgr-login-intro h1 { font-size: 31px; max-width: 450px; }
+  .sgr-login-rule { margin: 16px 0 15px; }
+  .sgr-login-description { font-size: 14px; line-height: 1.55; }
+  .sgr-login-intro-bottom { display: none; }
+  .sgr-login-form-area { padding: 36px 38px; }
+}
+@media (max-width: 560px) {
+  .sgr-login-header-inner { padding: 14px 17px; }
+  .sgr-login-logo { width: 47px; height: 47px; }
+  .sgr-login-brand { gap: 10px; }
+  .sgr-login-brand-name { font-size: 13px; }
+  .sgr-login-brand-unit { font-size: 11px; }
+  .sgr-login-header-tag { display: none; }
+  .sgr-login-main { padding: 19px 12px 28px; align-items: flex-start; }
+  .sgr-login-shell { border-radius: 8px; }
+  .sgr-login-intro { padding: 28px 23px 22px; }
+  .sgr-login-intro h1 { font-size: 27px; margin-bottom: 11px; }
+  .sgr-login-kicker { font-size: 10px; }
+  .sgr-login-form-area { padding: 29px 23px 32px; }
+  .sgr-login-form-area h2 { font-size: 26px; }
+  .sgr-login-form-description { margin-bottom: 22px; }
+  .sgr-login-footer { flex-direction: column; align-items: flex-start; padding: 16px 18px; }
+}

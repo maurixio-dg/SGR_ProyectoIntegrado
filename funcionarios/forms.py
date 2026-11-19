@@ -3,6 +3,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 
 from .models import Funcionario
+from .rut import normalizar_rut
 from delegaciones.models import Delegacion
 from catalogos.models import Cargo
 
@@ -101,38 +102,4 @@ class FuncionarioForm(forms.ModelForm):
         return nombre
 
     def clean_rut(self):
-        rut = self.cleaned_data["rut"]
-
-        rut = rut.replace(".", "").replace("-", "").upper()
-
-        if len(rut) < 2 or not rut[:-1].isdigit():
-            raise ValidationError("Ingrese un RUT válido.")
-
-        cuerpo = rut[:-1]
-        digito = rut[-1]
-
-        suma = 0
-        multiplicador = 2
-
-        for numero in reversed(cuerpo):
-            suma += int(numero) * multiplicador
-            multiplicador += 1
-
-            if multiplicador > 7:
-                multiplicador = 2
-
-        resto = 11 - (suma % 11)
-
-        if resto == 11:
-            esperado = "0"
-        elif resto == 10:
-            esperado = "K"
-        else:
-            esperado = str(resto)
-
-        if digito != esperado:
-            raise ValidationError(
-                "El dígito verificador del RUT es incorrecto."
-            )
-
-        return f"{int(cuerpo)}-{digito}"
+        return normalizar_rut(self.cleaned_data["rut"])

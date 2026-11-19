@@ -140,6 +140,9 @@
                                 Inactivo
                             </span>
                         {% endif %}
+                        {% if usuario.debe_cambiar_password %}
+                            <span class="d-block small text-warning-emphasis mt-1">Cambio de clave pendiente</span>
+                        {% endif %}
                     </td>
 
                     <td class="text-end">
@@ -151,6 +154,13 @@
                                 Editar
                             </a>
 
+                            <form method="post" action="{% url 'usuarios:reiniciar_password_temporal' usuario.pk %}" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-secondary btn-sm"
+                                    onclick="return confirm('¿Generar una nueva contraseña temporal? La contraseña actual dejará de funcionar.');">
+                                    Restablecer clave
+                                </button>
+                            </form>
                             {% if usuario.is_active %}
                                 <form method="post"
                                       action="{% url 'usuarios:desactivar' usuario.pk %}"

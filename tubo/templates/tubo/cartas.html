@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}Tubo de cartas | SGR La Serena{% endblock %}
+{% block breadcrumb %}GESTIÓN OPERATIVA / TUBO DE CARTAS{% endblock %}
+{% block content %}
+<div class="module-heading"><div><h2>Tubo de cartas</h2><p>Correspondencia municipal y su estado de seguimiento.</p></div>{% if puede_crear %}<a href="{% url 'tubo:nueva_carta' %}" class="btn-muni"><i class="bi bi-envelope-plus"></i> Nueva carta</a>{% endif %}</div>
+<div class="panel-card mb-4"><form method="get" class="row g-3 align-items-end"><div class="col-md-9"><label class="form-label" for="buscar">Buscar por asunto, destinatario o número de oficio</label><input id="buscar" name="buscar" class="form-control" value="{{ buscar }}"></div><div class="col-md-3"><button class="btn btn-dark w-100" type="submit">Buscar</button></div></form></div>
+<div class="panel-card"><div class="table-responsive"><table class="table table-hover align-middle sgr-table"><thead><tr><th>Código</th><th>Asunto</th><th>Destinatario</th><th>N.° oficio</th><th>Delegación</th><th>Estado</th><th></th></tr></thead><tbody>
+{% for c in pagina %}<tr><td>{{ c.codigo }}</td><td>{{ c.asunto }}</td><td>{{ c.destinatario }}</td><td>{{ c.numero_oficio|default:'—' }}</td><td>{{ c.delegacion.nombre }}</td><td>{{ c.get_estado_display }}</td><td><a class="btn btn-outline-secondary btn-sm" href="{% url 'tubo:detalle_carta' c.pk %}">Ver detalle</a></td></tr>{% empty %}<tr><td colspan="7" class="text-muted text-center">No hay cartas registradas.</td></tr>{% endfor %}
+</tbody></table></div><p class="small text-muted">{{ pagina.paginator.count }} registros · Página {{ pagina.number }} de {{ pagina.paginator.num_pages }}</p>{% if pagina.has_previous %}<a href="?pagina={{ pagina.previous_page_number }}&buscar={{ buscar|urlencode }}">Anterior</a>{% endif %}{% if pagina.has_next %}<a class="ms-3" href="?pagina={{ pagina.next_page_number }}&buscar={{ buscar|urlencode }}">Siguiente</a>{% endif %}</div>
+{% endblock %}

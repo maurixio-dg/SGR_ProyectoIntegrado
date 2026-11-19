@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Cargos de la matriz | SGR{% endblock %}
+{% block breadcrumb %}GESTIÓN OPERATIVA / MATRIZ SGR / CARGOS{% endblock %}
+{% block content %}
+<div class="module-heading"><div><h2>Cargos por hoja de la matriz</h2><p>{{ catalogo.nombre_archivo }}</p></div>
+<a class="btn btn-outline-secondary" href="{% url 'matriz_sgr:detalle' catalogo.pk %}">Volver a metas</a></div>
+<div class="alert alert-info">Una abreviatura del Excel no identifica automáticamente a un cargo del sistema.
+Seleccione su equivalencia exacta. Este ajuste no modifica las metas ni las personas ya guardadas.</div>
+<div class="panel-card table-responsive">
+<table class="table align-middle"><thead><tr><th>Hoja de origen</th><th>Cargo asociado</th><th>Definir equivalencia</th></tr></thead><tbody>
+{% for fila in filas %}<tr>
+  <td><strong>{{ fila.hoja }}</strong></td>
+  <td>{% if fila.mapa %}{{ fila.mapa.cargo.nombre_cargo }}{% else %}<span class="text-danger">Sin correspondencia</span>{% endif %}</td>
+  <td><form class="d-flex flex-wrap gap-2" method="post">{% csrf_token %}
+    <input type="hidden" name="hoja" value="{{ fila.hoja }}">
+    <select class="form-select" name="cargo" required style="max-width:290px">
+      <option value="">Seleccione un cargo municipal</option>
+      {% for cargo in cargos %}<option value="{{ cargo.pk }}" {% if fila.mapa and fila.mapa.cargo_id == cargo.pk %}selected{% endif %}>{{ cargo.nombre_cargo }}</option>{% endfor %}
+    </select><button class="btn-muni" type="submit">Guardar</button>
+  </form></td>
+</tr>{% endfor %}</tbody></table>
+</div>
+<div class="small text-muted mt-3">Si falta un cargo autorizado, créelo primero en «Cargos».
+Una meta que ya estuviese asignada a un cargo diferente aparecerá como inconsistente en «Auditoría de ponderaciones».</div>
+{% endblock %}

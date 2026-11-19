@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Importar organizaciones | SGR{% endblock %}
+{% block breadcrumb %}ORGANIZACIONES COMUNITARIAS{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center gap-3 mb-4"><h2 class="mb-0">Importar catastro Excel</h2><a href="{% url 'organizaciones:listar' %}" class="btn btn-outline-secondary">Volver</a></div>
+<div class="panel-card p-4 mb-4">
+  <form method="post" enctype="multipart/form-data" class="row g-3 align-items-end">{% csrf_token %}<input type="hidden" name="accion" value="previsualizar">
+    <div class="col-md-8"><label for="archivo" class="form-label">Catastro de organizaciones (.xlsx)</label><input id="archivo" name="archivo" type="file" accept=".xlsx" required class="form-control"><div class="form-text">Máximo 10 MB. El archivo debe tener las ocho columnas del catastro JJVV.</div></div>
+    <div class="col-md-4"><button type="submit" class="btn btn-primary w-100">Revisar archivo</button></div>
+  </form>
+</div>
+{% if token %}
+<div class="panel-card p-4 mb-4">
+  <h4 class="mb-3">Vista previa: {{ nombre_excel }}</h4>
+  <div class="row g-3 mb-3">
+    <div class="col-md-3"><div class="border rounded p-3"><div class="text-muted small">Filas válidas</div><div class="fs-3 fw-bold">{{ total }}</div></div></div>
+    <div class="col-md-3"><div class="border rounded p-3"><div class="text-muted small">Por incorporar</div><div class="fs-3 fw-bold">{{ nuevos }}</div></div></div>
+    <div class="col-md-3"><div class="border rounded p-3"><div class="text-muted small">Duplicados</div><div class="fs-3 fw-bold">{{ duplicados }}</div></div></div>
+    <div class="col-md-3"><div class="border rounded p-3"><div class="text-muted small">Sin territorio</div><div class="fs-3 fw-bold">{{ sin_territorio }}</div></div></div>
+  </div>
+  <p class="small text-muted">{{ sin_domicilio }} organizaciones sin domicilio. {{ avisos_total }} observaciones de formato. Las organizaciones importadas quedarán pendientes de verificación y sin delegación asignada hasta su revisión.</p>
+  <div class="table-responsive"><table class="table table-sm table-striped"><thead><tr><th>Fila</th><th>Organización</th><th>Territorio</th><th>Nº P. J.</th></tr></thead><tbody>
+    {% for r in muestra %}<tr><td>{{ r.fila_origen }}</td><td>{{ r.nombre }}</td><td>{{ r.territorio_origen|default:'—' }}</td><td>{{ r.numero_registro_pj|default:'—' }}</td></tr>{% endfor %}
+  </tbody></table></div>
+  {% if avisos %}<details class="mb-3"><summary>Observaciones del archivo</summary><ul class="mt-2">{% for aviso in avisos %}<li>{{ aviso }}</li>{% endfor %}</ul>{% if avisos_total > 20 %}<p class="small">Se muestran las primeras 20 observaciones.</p>{% endif %}</details>{% endif %}
+  <form method="post" class="d-flex gap-2">{% csrf_token %}<input type="hidden" name="accion" value="confirmar"><input type="hidden" name="token" value="{{ token }}"><button type="submit" class="btn btn-success" {% if not nuevos %}disabled{% endif %}>Confirmar importación</button><a href="{% url 'organizaciones:importar' %}" class="btn btn-outline-secondary">Cancelar</a></form>
+</div>
+{% endif %}
+{% endblock %}

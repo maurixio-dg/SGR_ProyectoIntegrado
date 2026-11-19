@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Credencial temporal | SGR La Serena{% endblock %}
+{% block breadcrumb %}ADMINISTRACIÓN DE USUARIOS / CREDENCIAL TEMPORAL{% endblock %}
+{% block content %}
+<div class="module-heading">
+  <div><h2>Contraseña temporal generada</h2><p>Cuenta: <strong>{{ usuario_creado.username }}</strong></p></div>
+</div>
+<div class="panel-card" style="max-width: 850px;">
+  <div class="alert alert-warning" role="alert">
+    <strong>Solo se mostrará en esta pantalla.</strong> Copie la clave ahora y entréguela al titular por un canal seguro.
+    Al abandonar la página, no podrá recuperarla; podrá generar una nueva desde Usuarios.
+  </div>
+  <p class="mb-2 fw-semibold">Contraseña temporal</p>
+  <div class="border rounded-3 p-3 bg-light mb-3" style="overflow-wrap:anywhere;">
+    <code id="clave-temporal" style="font-size: 1.15rem; user-select:all;">{{ clave_temporal }}</code>
+  </div>
+  <p>En el primer ingreso se solicitará la contraseña temporal y una contraseña nueva. Hasta entonces, la cuenta no podrá acceder al resto del SGR.</p>
+  <p class="text-muted small">Por seguridad, no almacene esta clave en documentos del proyecto, capturas públicas, repositorios ni correos sin protección.</p>
+  <a class="btn-muni" href="{% url 'usuarios:listar' %}">Volver a Usuarios</a>
+</div>
+{% endblock %}

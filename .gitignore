@@ -31,3 +31,18 @@ Thumbs.db
 # Respaldos de bases de datos
 backups/
 *.sql
+# Evaluación 3
+/private_evidencias/
+/.respaldo_eva3_fase1/
+
+/.respaldo_eva3_fase3/
+/.respaldo_eva3_dashboard/
+/.respaldo_eva3_fase4/
+/.sgr_importaciones_pendientes/
+/.respaldo_eva3_fase5_1/
+/.respaldo_eva3_fase5_2_403/
+
+/.respaldo_eva3_fase5_3/
+# Archivos temporales de instaladores
+*.respaldo_id_*
+/.sgr_validacion_matriz_cargos_ponderaciones_v1

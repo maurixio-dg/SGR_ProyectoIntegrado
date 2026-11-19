@@ -14,11 +14,25 @@ from django.shortcuts import (
 from django.views.decorators.http import require_POST
 
 from functools import wraps
+import secrets
+from django.views.decorators.cache import never_cache
 
 from .forms import UsuarioCrearForm, UsuarioEditarForm
 
 
 Usuario = get_user_model()
+
+
+def _pagina_clave_temporal(request, usuario, clave):
+    """Renderiza la clave exclusivamente en esta respuesta: no se guarda en sesión ni en logs."""
+    respuesta = render(request, "usuarios/clave_temporal.html", {
+        "usuario_creado": usuario,
+        "clave_temporal": clave,
+    })
+    respuesta["Cache-Control"] = "no-store, no-cache, must-revalidate, private"
+    respuesta["Pragma"] = "no-cache"
+    return respuesta
+
 
 
 # ==========================================
@@ -87,6 +101,7 @@ def listar_usuarios(request):
 # ==========================================
 
 @solo_administrador
+@never_cache
 def crear_usuario(request):
 
     formulario = UsuarioCrearForm(request.POST or None)
@@ -99,15 +114,11 @@ def crear_usuario(request):
         # especiales de Django.
         usuario.is_staff = False
         usuario.is_superuser = False
-
+        usuario.debe_cambiar_password = True
+        clave_temporal = secrets.token_urlsafe(18)
+        usuario.set_password(clave_temporal)
         usuario.save()
-
-        messages.success(
-            request,
-            "Usuario registrado correctamente."
-        )
-
-        return redirect("usuarios:listar")
+        return _pagina_clave_temporal(request, usuario, clave_temporal)
 
     return render(
         request,
@@ -116,6 +127,7 @@ def crear_usuario(request):
             "formulario": formulario,
             "titulo": "Registrar usuario",
             "accion": "Registrar usuario",
+            "es_creacion_temporal": True,
         }
     )
 
@@ -247,6 +259,22 @@ def activar_usuario(request, pk):
 
 
 # ==========================================
+# NUEVA CONTRASEÑA TEMPORAL POR ADMINISTRADOR
+# ==========================================
+
+@solo_administrador
+@require_POST
+@never_cache
+def reiniciar_password_temporal(request, pk):
+    usuario = get_object_or_404(Usuario, pk=pk, is_superuser=False)
+    clave_temporal = secrets.token_urlsafe(18)
+    usuario.set_password(clave_temporal)
+    usuario.debe_cambiar_password = True
+    usuario.save(update_fields=["password", "debe_cambiar_password"])
+    return _pagina_clave_temporal(request, usuario, clave_temporal)
+
+
+# ==========================================
 # PERFIL PERSONAL (TODOS LOS USUARIOS)
 # ==========================================
 
@@ -309,7 +337,14 @@ def cambiar_mi_password(request):
         campo.widget.attrs["class"] = "form-control"
     if request.method == "POST" and formulario.is_valid():
         usuario = formulario.save()
+        era_obligatorio = usuario.debe_cambiar_password
+        if era_obligatorio:
+            usuario.debe_cambiar_password = False
+            usuario.save(update_fields=["debe_cambiar_password"])
         update_session_auth_hash(request, usuario)
         messages.success(request, "Contraseña actualizada correctamente.")
-        return redirect("usuarios:mi_perfil")
-    return render(request, "usuarios/cambiar_password.html", {"formulario": formulario})
+        return redirect("gestion:dashboard" if era_obligatorio else "usuarios:mi_perfil")
+    return render(request, "usuarios/cambiar_password.html", {
+        "formulario": formulario,
+        "cambio_obligatorio": request.user.debe_cambiar_password,
+    })

@@ -6,6 +6,7 @@ app_name = "usuarios"
 
 urlpatterns = [
     path("mi-perfil/", views.mi_perfil, name="mi_perfil"),
+    path("<int:pk>/reiniciar-temporal/", views.reiniciar_password_temporal, name="reiniciar_password_temporal"),
     path("mi-perfil/contrasena/", views.cambiar_mi_password, name="cambiar_mi_password"),
     path(
         "",

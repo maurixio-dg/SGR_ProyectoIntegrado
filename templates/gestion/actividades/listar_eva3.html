@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Actividades | SGR La Serena{% endblock %}
+{% block breadcrumb %}GESTIÓN / ACTIVIDADES{% endblock %}
+{% block content %}
+<div class="module-heading">
+  <div><h2>Actividades y evidencias</h2><p>Registros almacenados en MariaDB.</p></div>
+  {% if puede_registrar %}<a class="btn-muni" href="{% url 'gestion:registrar_actividad' %}"><i class="bi bi-plus-circle"></i> Nueva actividad</a>{% endif %}
+</div>
+{% if request.user.is_superuser or request.user.rol == 'ADMIN' or request.user.rol == 'COORD' or request.user.rol == 'DELEG' or request.user.rol == 'VERIF' %}
+<div class="mb-3"><a class="btn btn-outline-secondary" href="{% url 'gestion:validar_evidencias' %}"><i class="bi bi-clipboard-check"></i> Revisar actividades y evidencias</a></div>
+{% endif %}
+<div class="panel-card mb-4">
+  <form method="get" class="row g-3 align-items-end">
+    <div class="col-md-6"><label class="form-label">Buscar</label><input class="form-control" name="buscar" value="{{ buscar }}" placeholder="Actividad, funcionario o solicitante"></div>
+    <div class="col-md-4"><label class="form-label">Estado</label><select class="form-select" name="estado"><option value="">Todos</option>{% for clave, nombre in estados %}<option value="{{ clave }}" {% if estado == clave %}selected{% endif %}>{{ nombre }}</option>{% endfor %}</select></div>
+    <div class="col-md-2"><button class="btn btn-dark w-100" type="submit">Buscar</button></div>
+  </form>
+</div>
+<div class="panel-card">
+  <div class="table-responsive"><table class="table table-hover align-middle sgr-table">
+    <thead><tr><th>Código</th><th>Fecha</th><th>Actividad</th><th>Funcionario</th><th>Delegación</th><th>Estado</th><th>Evidencia</th><th>Acciones</th></tr></thead>
+    <tbody>{% for actividad in pagina %}
+      <tr><td>{{ actividad.codigo }}</td><td>{{ actividad.fecha_actividad|date:"d/m/Y" }}</td><td>{{ actividad.titulo }}</td><td>{{ actividad.funcionario.nombre }}</td><td>{{ actividad.delegacion.nombre }}</td><td>{{ actividad.get_estado_display }}</td>
+        <td>{% if actividad.evidencia %}<a href="{% url 'gestion:descargar_evidencia_actividad' actividad.pk %}">Descargar</a>{% else %}—{% endif %}</td>
+        <td>
+          {% if actividad.puede_editar_eva3 %}
+            <a href="{% url 'gestion:editar_actividad' actividad.pk %}" class="btn btn-outline-primary btn-sm">Editar</a>
+          {% else %}
+            <a href="{% url 'gestion:detalle_actividad' actividad.pk %}" class="btn btn-outline-primary btn-sm">Ver detalle</a>
+          {% endif %}
+        </td>
+      </tr>
+    {% empty %}<tr><td colspan="8" class="text-center text-muted">Todavía no hay actividades registradas.</td></tr>{% endfor %}</tbody>
+  </table></div>
+  {% if pagina.has_previous %}<a href="?pagina={{ pagina.previous_page_number }}&buscar={{ buscar|urlencode }}&estado={{ estado|urlencode }}">Anterior</a>{% endif %}
+  <span class="mx-2">Página {{ pagina.number }} de {{ pagina.paginator.num_pages }}</span>
+  {% if pagina.has_next %}<a href="?pagina={{ pagina.next_page_number }}&buscar={{ buscar|urlencode }}&estado={{ estado|urlencode }}">Siguiente</a>{% endif %}
+</div>
+{% endblock %}

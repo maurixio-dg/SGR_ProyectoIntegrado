@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Crear meta desde matriz | SGR{% endblock %}
+{% block breadcrumb %}GESTIÓN OPERATIVA / MATRIZ SGR / ASIGNAR META{% endblock %}
+{% block content %}
+<div class="mb-4"><h2>Crear meta desde la matriz</h2><p class="text-muted">{{ item.hoja }} · {{ item.nombre }}</p></div>
+<div class="panel-card p-4" style="max-width:820px">
+<div class="row g-3 mb-3"><div class="col-sm-6"><strong>Objetivo trimestral</strong><div>{{ item.meta_original }}</div></div><div class="col-sm-6"><strong>Ponderación</strong><div>{{ item.ponderacion }}%</div></div></div>
+<div class="alert alert-info">Antes de crear esta meta, configure el cargo de la hoja del Excel desde
+<a href="{% url 'matriz_sgr:equivalencias' item.catalogo_id %}">Cargos por hoja</a>.
+No se mezclan ponderaciones de personas o cargos diferentes.</div>
+<form method="post">{% csrf_token %}
+  {% if formulario.non_field_errors %}<div class="alert alert-danger">{{ formulario.non_field_errors }}</div>{% endif %}
+  <div class="row g-3">{% for campo in formulario %}<div class="col-lg-6"><label class="form-label" for="{{ campo.id_for_label }}">{{ campo.label }}</label><select class="form-select {% if campo.errors %}is-invalid{% endif %}" name="{{ campo.html_name }}" id="{{ campo.id_for_label }}">{% for valor, texto in campo.field.choices %}<option value="{{ valor }}" {% if campo.value|stringformat:'s' == valor|stringformat:'s' %}selected{% endif %}>{{ texto }}</option>{% endfor %}</select>{% for error in campo.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}</div>{% endfor %}</div>
+  <div class="d-flex flex-wrap gap-2 mt-4"><button class="btn btn-primary" type="submit">Crear meta en Indicadores</button><a class="btn btn-outline-secondary" href="{% url 'matriz_sgr:detalle' item.catalogo_id %}">Cancelar</a></div>
+</form>
+</div>
+{% endblock %}

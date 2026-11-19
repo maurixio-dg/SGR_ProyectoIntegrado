@@ -29,6 +29,9 @@
 
 <div class="panel-card module-form-card">
 
+    {% if es_creacion_temporal %}
+        <div class="alert alert-info">Al registrar la cuenta se generará automáticamente una contraseña temporal. Se mostrará una sola vez al administrador. El titular deberá cambiarla en su primer ingreso.</div>
+    {% endif %}
     <form method="post" novalidate>
         {% csrf_token %}
 

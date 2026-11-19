@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% block title %}Registrar ausencia | SGR{% endblock %}
+{% block breadcrumb %}GESTIÓN OPERATIVA / INDICADORES / AUSENCIAS{% endblock %}
+{% block content %}
+<div class="module-heading"><h2>Registrar ausencia</h2><a href="{% url 'gestion:ausencias_sgr' %}" class="btn btn-outline-secondary">Volver</a></div>
+<div class="panel-card"><form method="post" novalidate>{% csrf_token %}{% if formulario.non_field_errors %}<div class="alert alert-danger">{{ formulario.non_field_errors }}</div>{% endif %}<div class="row g-3">{% for campo in formulario %}<div class="col-md-6"><label class="form-label" for="{{ campo.id_for_label }}">{{ campo.label }}</label>{{ campo }}{% for error in campo.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}</div>{% endfor %}</div><div class="mt-4 d-flex gap-2"><button type="submit" class="btn-muni">Guardar ausencia</button><a href="{% url 'gestion:ausencias_sgr' %}" class="btn btn-outline-secondary">Cancelar</a></div></form></div>
+{% endblock %}

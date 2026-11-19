@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Organizaciones comunitarias | SGR{% endblock %}
+{% block breadcrumb %}ORGANIZACIONES COMUNITARIAS{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+  <div><h2 class="mb-1">Organizaciones comunitarias</h2><p class="text-muted mb-0">Catastro municipal por territorio y delegación.</p></div>
+  {% if puede_editar %}<div class="d-flex gap-2 flex-wrap">
+    <a class="btn btn-outline-primary" href="{% url 'organizaciones:importar' %}"><i class="bi bi-file-earmark-arrow-up me-1"></i> Importar Excel</a>
+    <a class="btn btn-primary" href="{% url 'organizaciones:crear' %}"><i class="bi bi-plus-lg me-1"></i> Nueva organización</a>
+  </div>{% endif %}
+</div>
+<div class="panel-card mb-4 p-3">
+  <form method="get" class="row g-3 align-items-end">
+    <div class="col-lg-4"><label for="buscar" class="form-label">Buscar</label><input id="buscar" name="buscar" class="form-control" value="{{ buscar }}" placeholder="Organización, domicilio o número de registro"></div>
+    <div class="col-lg-3"><label for="tipo" class="form-label">Tipo</label><select id="tipo" name="tipo" class="form-select"><option value="">Todos</option>{% for clave, etiqueta in tipos %}<option value="{{ clave }}" {% if tipo_actual == clave %}selected{% endif %}>{{ etiqueta }}</option>{% endfor %}</select></div>
+    <div class="col-lg-3"><label for="estado" class="form-label">Verificación</label><select id="estado" name="estado" class="form-select"><option value="">Todos</option>{% for clave, etiqueta in estados %}<option value="{{ clave }}" {% if estado_actual == clave %}selected{% endif %}>{{ etiqueta }}</option>{% endfor %}</select></div>
+    <div class="col-lg-2"><button type="submit" class="btn btn-outline-primary w-100">Filtrar</button></div>
+    <div class="col-lg-4"><label for="territorio" class="form-label">Territorio de origen</label><input id="territorio" name="territorio" class="form-control" value="{{ territorio_actual }}" placeholder="Ej. AN TENA, PAMPA, RURAL"></div>
+    <div class="col-lg-2"><a href="{% url 'organizaciones:listar' %}" class="btn btn-outline-secondary w-100">Limpiar filtros</a></div>
+  </form>
+</div>
+<div class="panel-card p-3">
+  <div class="d-flex justify-content-between align-items-center mb-3"><h5 class="mb-0">Registros</h5><span class="badge bg-secondary">{{ pagina.paginator.count }} de {{ total_disponibles }}</span></div>
+  <div class="table-responsive"><table class="table table-hover align-middle sgr-table">
+    <thead><tr><th>Organización</th><th>Tipo</th><th>Territorio</th><th>Delegación</th><th>Nº P. J.</th><th>Estado</th>{% if puede_editar %}<th>Acciones</th>{% endif %}</tr></thead>
+    <tbody>{% for org in pagina %}<tr>
+      <td><strong>{{ org.nombre }}</strong><div class="small text-muted">{{ org.domicilio_legal|default:'Sin domicilio informado' }}</div></td>
+      <td>{{ org.get_tipo_display }}</td><td>{{ org.territorio_origen|default:'Sin asignar' }}</td>
+      <td>{{ org.delegacion.nombre|default:'Pendiente' }}</td><td>{{ org.numero_registro_pj|default:'—' }}</td>
+      <td>{% if org.estado_verificacion == 'VER' %}<span class="badge bg-success">Verificada</span>{% elif org.estado_verificacion == 'OBS' %}<span class="badge bg-warning text-dark">Observada</span>{% else %}<span class="badge bg-secondary">Pendiente</span>{% endif %}</td>
+      {% if puede_editar %}<td class="text-nowrap"><a class="btn btn-sm btn-outline-primary" href="{% url 'organizaciones:editar' org.pk %}">Editar</a> <a class="btn btn-sm btn-outline-danger" href="{% url 'organizaciones:eliminar' org.pk %}">Eliminar</a></td>{% endif %}
+    </tr>{% empty %}<tr><td colspan="7" class="text-muted text-center py-4">{% if total_disponibles == 0 %}No hay organizaciones registradas.{% else %}No hay organizaciones para los filtros seleccionados. <a href="{% url 'organizaciones:listar' %}">Limpiar filtros</a>{% endif %}</td></tr>{% endfor %}</tbody>
+  </table></div>
+  {% if pagina.paginator.num_pages > 1 %}<div class="d-flex justify-content-between align-items-center pt-2">
+    <span class="small text-muted">Página {{ pagina.number }} de {{ pagina.paginator.num_pages }}</span><div class="d-flex gap-2">
+    {% if pagina.has_previous %}<a class="btn btn-sm btn-outline-secondary" href="?pagina={{ pagina.previous_page_number }}&buscar={{ buscar|urlencode }}&tipo={{ tipo_actual|urlencode }}&estado={{ estado_actual|urlencode }}&territorio={{ territorio_actual|urlencode }}">Anterior</a>{% endif %}
+    {% if pagina.has_next %}<a class="btn btn-sm btn-outline-secondary" href="?pagina={{ pagina.next_page_number }}&buscar={{ buscar|urlencode }}&tipo={{ tipo_actual|urlencode }}&estado={{ estado_actual|urlencode }}&territorio={{ territorio_actual|urlencode }}">Siguiente</a>{% endif %}
+    </div></div>{% endif %}
+</div>
+{% endblock %}

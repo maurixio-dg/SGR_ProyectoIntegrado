@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% block title %}{{ titulo }} | Agenda SGR{% endblock %}
+{% block breadcrumb %}GESTIÓN OPERATIVA / AGENDA{% endblock %}
+{% block content %}
+<div class="module-heading"><h2>{{ titulo }}</h2><a href="{% url 'gestion:agenda_colectiva' %}" class="btn btn-outline-secondary">Volver</a></div>
+<div class="panel-card"><form method="post" novalidate>{% csrf_token %}{% if formulario.non_field_errors %}<div class="alert alert-danger">{{ formulario.non_field_errors }}</div>{% endif %}<div class="row g-3">{% for campo in formulario %}<div class="col-md-6"><label class="form-label" for="{{ campo.id_for_label }}">{{ campo.label }}{% if campo.field.required %} *{% endif %}</label>{{ campo }}{% if campo.errors %}<div class="text-danger small">{{ campo.errors }}</div>{% endif %}{% if campo.help_text %}<div class="form-text">{{ campo.help_text }}</div>{% endif %}</div>{% endfor %}</div><div class="mt-4 d-flex gap-2"><button class="btn btn-danger" type="submit">Guardar compromiso</button><a href="{% url 'gestion:agenda_colectiva' %}" class="btn btn-outline-secondary">Cancelar</a></div></form></div>
+{% endblock %}

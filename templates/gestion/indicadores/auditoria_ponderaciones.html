@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Auditoría de metas | SGR{% endblock %}
+{% block breadcrumb %}GESTIÓN OPERATIVA / INDICADORES / AUDITORÍA{% endblock %}
+{% block content %}
+<div class="module-heading"><div><h2>Auditoría de metas y ponderaciones</h2>
+<p>Comprobación por delegación, período y funcionario o cargo.</p></div>
+<a href="{% url 'gestion:indicadores' %}" class="btn btn-outline-secondary">Volver</a></div>
+<div class="alert alert-info">El total base de cada grupo debe sumar 100%. Los grupos incompletos se muestran como advertencia;
+superar el 100% se considera inconsistencia. Felicitaciones y reclamos no se suman a las metas base.</div>
+<div class="panel-card table-responsive mb-3"><h3 class="h5">Ponderaciones por ámbito</h3>
+<table class="table align-middle"><thead><tr><th>Delegación</th><th>Período</th><th>Ámbito</th><th>Total base</th><th>Situación</th><th>Metas</th></tr></thead><tbody>
+{% for g in grupos %}<tr><td>{{ g.delegacion }}</td><td>{{ g.periodo }}</td><td>{{ g.ambito }}</td>
+<td><strong>{{ g.total|floatformat:2 }}%</strong></td>
+<td>{% if g.estado == 'COMPLETO' %}<span class="text-success">Completo</span>
+  {% elif g.estado == 'EXCESO' %}<span class="text-danger">Exceso: corregir</span>
+  {% else %}<span class="text-warning">Incompleto</span>{% endif %}</td>
+<td>{% for m in g.metas %}<div><a href="{% url 'gestion:configurar_meta_sgr' m.pk %}">{{ m.nombre }}</a> — {{ m.ponderacion }}%</div>{% endfor %}</td></tr>
+{% empty %}<tr><td colspan="6">No hay metas activas en el ámbito autorizado.</td></tr>{% endfor %}
+</tbody></table></div>
+<div class="panel-card table-responsive"><h3 class="h5">Correspondencias de cargo en metas importadas</h3>
+<table class="table"><thead><tr><th>Meta</th><th>Origen</th><th>Diagnóstico</th><th>Corregir</th></tr></thead><tbody>
+{% for x in alertas %}<tr><td>{{ x.meta.nombre }}</td><td>{{ x.item.hoja }}</td>
+<td class="text-danger">{{ x.error }}</td><td><a href="{% url 'matriz_sgr:equivalencias' x.item.catalogo_id %}">Mapear cargo</a> ·
+<a href="{% url 'gestion:configurar_meta_sgr' x.meta.pk %}">Configurar</a></td></tr>
+{% empty %}<tr><td colspan="4">Sin incompatibilidades identificadas en metas importadas.</td></tr>{% endfor %}
+</tbody></table></div>
+{% endblock %}

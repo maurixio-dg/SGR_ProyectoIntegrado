@@ -33,21 +33,27 @@
         href="{% static 'img/logo.png' %}"
     >
 
+    <link rel="stylesheet" href="{% static 'tubo/tubo.css' %}">
     {% block extra_css %}{% endblock %}
+    <!-- SGR_DISENO_GLOBAL_20261114 -->
+    <link rel="stylesheet" href="{% static 'css/sgr_diseno_global.css' %}?v=1">
 </head>
 
 <body class="sgr-body">
+<a href="#contenido-principal" class="sgr-skip-link">Saltar al contenido</a>
 
+<div id="sgr-mobile-backdrop" class="sgr-mobile-backdrop" aria-hidden="true"></div>
 <div class="sgr-layout">
 
     <!-- =====================================
          MENÚ LATERAL
     ====================================== -->
 
-    <aside class="sgr-sidebar">
+    <aside class="sgr-sidebar" id="sgr-sidebar-navigation" aria-label="Menú principal">
 
         <!-- IDENTIDAD INSTITUCIONAL -->
         <div class="sidebar-top">
+            <button type="button" id="sgr-menu-close" class="sgr-menu-close" aria-label="Cerrar menú"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
 
             <div class="brand-box">
 
@@ -60,7 +66,7 @@
                 </div>
 
                 <div class="brand-text">
-                    <strong>Municipalidad de La Serena</strong>
+                    <strong>Ilustre Municipalidad de La Serena</strong>
                     <span>SGR · Delegaciones Municipales</span>
                    
 
@@ -168,6 +174,51 @@
 {% endif %}
 
 
+            <!-- ORGANIZACIONES COMUNITARIAS -->
+{% if request.user.is_superuser or request.user.rol == 'ADMIN' or request.user.rol == 'COORD' or request.user.rol == 'DELEG' %}
+<a href="{% url 'organizaciones:listar' %}"
+   class="nav-link-sgr {% if request.resolver_match.namespace == 'organizaciones' %}active{% endif %}"
+   {% if request.resolver_match.namespace == 'organizaciones' %}aria-current="page"{% endif %}>
+    <i class="bi bi-diagram-3-fill" aria-hidden="true"></i>
+    <span>Organizaciones comunitarias</span>
+</a>
+{% endif %}
+
+            <!-- MATRIZ SGR TRIMESTRAL -->
+{% if request.user.is_superuser or request.user.rol == 'ADMIN' %}
+<a href="{% url 'matriz_sgr:catalogos' %}"
+   class="nav-link-sgr {% if request.resolver_match.namespace == 'matriz_sgr' %}active{% endif %}"
+   {% if request.resolver_match.namespace == 'matriz_sgr' %}aria-current="page"{% endif %}>
+    <i class="bi bi-table" aria-hidden="true"></i>
+    <span>Matriz SGR trimestral</span>
+</a>
+{% endif %}
+
+
+            <!-- SGR-TUBO-INSTALADO -->
+            <div class="nav-section-title">ATENCIÓN Y SEGUIMIENTO</div>
+            <a href="{% url 'tubo:gestiones' %}" class="nav-link-sgr {% if request.resolver_match.namespace == 'tubo' and request.resolver_match.url_name == 'gestiones' %}active{% endif %}">
+                <i class="bi bi-inboxes" aria-hidden="true"></i><span>Tubo de seguimiento</span>
+            </a>
+            <a href="{% url 'tubo:cartas' %}" class="nav-link-sgr {% if request.resolver_match.namespace == 'tubo' and request.resolver_match.url_name == 'cartas' %}active{% endif %}">
+                <i class="bi bi-envelope-paper" aria-hidden="true"></i><span>Tubo de cartas</span>
+            </a>
+            <a href="{% url 'tubo:vecinos' %}" class="nav-link-sgr {% if request.resolver_match.namespace == 'tubo' and request.resolver_match.url_name == 'vecinos' %}active{% endif %}">
+                <i class="bi bi-person-vcard" aria-hidden="true"></i><span>Vecinos</span>
+            </a>
+            {% if request.user.is_superuser or request.user.rol == 'ADMIN' %}
+            <a href="{% url 'tubo:catalogo' 'tipos' %}" class="nav-link-sgr">
+                <i class="bi bi-list-ul" aria-hidden="true"></i><span>Catálogos de atención</span>
+            </a>
+            {% endif %}
+
+            <!-- SGR_VALORACIONES_FORMALES_2026 -->
+            {% if request.user.is_superuser or request.user.rol == 'ADMIN' or request.user.rol == 'DELEG' %}
+            <a href="{% url 'matriz_sgr:valoraciones' %}" class="nav-link-sgr {% if request.resolver_match.url_name == 'valoraciones' %}active{% endif %}">
+                <i class="bi bi-file-earmark-check" aria-hidden="true"></i><span>Felicitaciones y reclamos</span>
+            </a>
+            {% endif %}
+
             <!-- GESTIÓN OPERATIVA -->
             <div class="nav-section-title">
                 GESTIÓN OPERATIVA
@@ -255,6 +306,7 @@
         <header class="sgr-topbar">
 
             <div class="topbar-left">
+                <button type="button" id="sgr-menu-toggle" class="sgr-menu-toggle" aria-controls="sgr-sidebar-navigation" aria-expanded="false" aria-label="Abrir menú"><i class="bi bi-list" aria-hidden="true"></i></button>
                 <div class="breadcrumb-mini">
 
                     <i class="bi bi-chevron-right" aria-hidden="true"></i>
@@ -372,6 +424,7 @@
 </div>
 
 <!-- BOOTSTRAP JAVASCRIPT -->
+<script defer src="{% static 'js/sgr_institucional_mobile.js' %}?v=1"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 {% block scripts %}

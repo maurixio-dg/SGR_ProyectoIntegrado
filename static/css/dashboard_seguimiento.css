@@ -1,0 +1,35 @@
+.sgr-seguimiento{margin-bottom:1.5rem;color:#14263b}
+.sgr-panel-cabecera{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:1rem}
+.sgr-panel-cabecera h3{font-size:1.45rem;font-weight:750;margin:.4rem 0}
+.sgr-panel-cabecera h4,.sgr-panel-grafico h4{font-size:1.04rem;font-weight:750;margin:0 0:.4rem}
+.sgr-panel-cabecera p,.sgr-panel-grafico>p{color:#637389;font-size:.86rem;margin:0 0 1rem}
+.sgr-etiqueta{font-size:.68rem;letter-spacing:.12em;font-weight:800;color:#a01e39}
+.sgr-filtros-panel{display:flex;flex-wrap:wrap;gap:.8rem;align-items:end;border:1px solid #dbe2ea;background:white;border-radius:14px;padding:1rem;margin-bottom:1rem}
+.sgr-filtros-panel label{display:flex;flex-direction:column;gap:.35rem;flex:1 1 180px;min-width:150px;font-weight:650;font-size:.82rem}
+.sgr-filtros-panel label select{font-weight:400}
+.btn-sgr-filtrar{background:#9f2039;color:white;border:1px solid #9f2039}.btn-sgr-filtrar:hover{background:#7e172e;color:white}
+.sgr-panel-datos{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.8rem;margin-bottom:1rem}
+.sgr-panel-datos>div{background:white;border:1px solid #dbe2ea;border-radius:13px;padding:1rem;display:flex;flex-direction:column;gap:.35rem}
+.sgr-panel-datos span{font-size:.8rem;color:#64748b}.sgr-panel-datos strong{font-size:1.55rem;line-height:1.2;color:#14263b}
+.sgr-panel-graficos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin-bottom:1rem}
+.sgr-panel-grafico{background:white;border:1px solid #dbe2ea;border-radius:14px;padding:1.25rem;min-width:0}
+.sgr-lista-barras{display:flex;flex-direction:column;gap:.9rem}
+.sgr-valor-fila{display:flex;justify-content:space-between;align-items:baseline;gap:.6rem;font-size:.83rem;margin-bottom:.35rem}
+.sgr-valor-fila span{min-width:0;overflow-wrap:anywhere}.sgr-valor-fila strong{white-space:nowrap;font-variant-numeric:tabular-nums}
+.sgr-pista{background:#e9eef3;height:.64rem;border-radius:99px;overflow:hidden}
+.sgr-relleno{background:#9f2039;height:100%;border-radius:99px}
+.sgr-relleno.estado-APR,.sgr-relleno.semaforo-VERDE{background:#238356}
+.sgr-relleno.estado-REG{background:#5277a5}.sgr-relleno.estado-REV,.sgr-relleno.semaforo-AMBAR{background:#d49924}
+.sgr-relleno.estado-RECH,.sgr-relleno.semaforo-ROJO{background:#bb4250}
+.sgr-relleno.sgr-agenda{background:#547c9c}
+.sgr-barras-meses{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:.7rem;align-items:end;min-height:205px}
+.sgr-barra-mes{display:flex;flex-direction:column;align-items:center;min-width:0;gap:.35rem;font-size:.78rem;color:#64748b}
+.sgr-barra-mes strong{font-size:.82rem;color:#14263b;font-variant-numeric:tabular-nums}
+.sgr-barra-pista{height:130px;width:100%;max-width:48px;border-radius:9px 9px 3px 3px;background:#f2f4f7;display:flex;align-items:flex-end;overflow:hidden}
+.sgr-barra-relleno{background:linear-gradient(180deg,#b53d56,#9f2039);width:100%;border-radius:9px 9px 3px 3px}
+.sgr-leyenda{font-size:.74rem;color:#66788e;margin:.32rem 0 0}
+.sgr-vacio{padding:1.3rem 0;text-align:center;color:#64748b}
+.sgr-semaforo-VERDE{color:#167144}.sgr-semaforo-AMBAR{color:#986010}.sgr-semaforo-ROJO{color:#a22537}.sgr-semaforo-PENDIENTE{color:#64748b}
+.sgr-panel-nota{margin:1rem 0}
+@media(max-width:991px){.sgr-panel-graficos{grid-template-columns:1fr}.sgr-panel-datos{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:575px){.sgr-filtros-panel{display:grid;grid-template-columns:1fr}.sgr-panel-datos{gap:.55rem}.sgr-panel-datos>div{padding:.8rem}.sgr-panel-datos strong{font-size:1.25rem}.sgr-panel-grafico{padding:1rem}.sgr-valor-fila{flex-wrap:wrap}.sgr-panel-cabecera{align-items:flex-start;flex-direction:column}.sgr-barras-meses{gap:.3rem}}

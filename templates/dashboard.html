@@ -3,6 +3,10 @@
 {% block title %}Panel principal | SGR La Serena{% endblock %}
 {% block breadcrumb %}PANEL PRINCIPAL{% endblock %}
 
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard_seguimiento.css' %}">
+{% endblock %}
 {% block content %}
 <!-- Encabezado -->
 <div class="dashboard-header mb-4">
@@ -75,29 +79,36 @@
     </div>
 </div>
 
-<!-- Gestión municipal y estado de los módulos -->
+<!-- Gestión operativa -->
 <div class="row g-4 mb-4">
     <div class="col-lg-6">
         <div class="panel-card h-100">
             <div class="panel-card-header">
                 <div>
-                    <h5><i class="bi bi-buildings me-2" aria-hidden="true"></i>Gestión de delegaciones</h5>
-                    <p>Administración de las delegaciones municipales de La Serena.</p>
+                    <h5><i class="bi bi-clock-history me-2" aria-hidden="true"></i>Últimas actividades</h5>
                 </div>
+                <a class="btn btn-sm btn-outline-secondary" href="{% url 'gestion:listar_actividades' %}">Ver todas</a>
             </div>
-            <div class="text-center py-4">
-                <div class="mb-3">
-                    <i class="bi bi-bank" style="font-size: 48px; color: #a32035;" aria-hidden="true"></i>
+            <div class="px-2 pb-2">
+                {% for actividad in actividades_recientes %}
+                <div class="d-flex justify-content-between align-items-center gap-3 border-bottom py-3">
+                    <div class="min-w-0">
+                        <div class="fw-semibold text-truncate">{{ actividad.titulo }}</div>
+                        <div class="small text-muted">{{ actividad.fecha_actividad|date:"d/m/Y" }} · {{ actividad.funcionario.nombre }}</div>
+                    </div>
+                    {% if actividad.estado == 'APR' %}
+                    <span class="badge bg-success">Aprobada</span>
+                    {% elif actividad.estado == 'RECH' %}
+                    <span class="badge bg-danger">Rechazada</span>
+                    {% elif actividad.estado == 'REV' %}
+                    <span class="badge bg-warning text-dark">En revisión</span>
+                    {% else %}
+                    <span class="badge bg-secondary">Registrada</span>
+                    {% endif %}
                 </div>
-                <h3 class="fw-bold">{{ total_delegaciones }}</h3>
-                <p class="text-muted">Delegaciones registradas en el sistema</p>
-                {% if request.user.is_superuser or request.user.rol == 'ADMIN' %}
-                <a href="{% url 'delegaciones:listar' %}" class="btn-muni">
-                    <i class="bi bi-arrow-right-circle" aria-hidden="true"></i> Administrar delegaciones
-                </a>
-                {% else %}
-                <p class="text-muted small">La administración está disponible para usuarios autorizados.</p>
-                {% endif %}
+                {% empty %}
+                <div class="text-center text-muted py-4">Sin actividades registradas.</div>
+                {% endfor %}
             </div>
         </div>
     </div>
@@ -106,48 +117,44 @@
             <div class="panel-card-header">
                 <div>
                     <h5><i class="bi bi-graph-up-arrow me-2" aria-hidden="true"></i>Resumen de gestión municipal</h5>
-                    <p>Vista ilustrativa de la gestión operativa del SGR.</p>
                 </div>
             </div>
-
-            <!-- Valores ficticios: no corresponden a consultas de MySQL -->
             <div class="row g-3 p-2">
                 <div class="col-sm-6">
                     <div class="border rounded-4 p-3 h-100">
                         <i class="bi bi-journal-text fs-3 text-primary" aria-hidden="true"></i>
-                        <div class="fs-2 fw-bold mt-2">3</div>
-                        <div class="text-muted small">Actividades de ejemplo</div>
+                        <div class="fs-2 fw-bold mt-2">{{ total_actividades }}</div>
+                        <div class="text-muted small">Actividades registradas</div>
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="border rounded-4 p-3 h-100">
                         <i class="bi bi-calendar-check fs-3 text-success" aria-hidden="true"></i>
-                        <div class="fs-2 fw-bold mt-2">4</div>
-                        <div class="text-muted small">Compromisos de ejemplo</div>
+                        <div class="fs-2 fw-bold mt-2">{{ total_compromisos }}</div>
+                        <div class="text-muted small">Compromisos</div>
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="border rounded-4 p-3 h-100">
                         <i class="bi bi-bullseye fs-3 text-primary" aria-hidden="true"></i>
-                        <div class="fs-2 fw-bold mt-2">3</div>
-                        <div class="text-muted small">Indicadores de ejemplo</div>
+                        <div class="fs-2 fw-bold mt-2">{{ total_indicadores }}</div>
+                        <div class="text-muted small">Indicadores activos</div>
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="border rounded-4 p-3 h-100">
                         <i class="bi bi-bar-chart-line fs-3 text-warning" aria-hidden="true"></i>
-                        <div class="fs-2 fw-bold mt-2">70%</div>
-                        <div class="text-muted small">Cumplimiento ilustrativo</div>
+                        <div class="fs-2 fw-bold mt-2">{% if hay_metas %}{{ cumplimiento_metas|floatformat:1 }}%{% else %}—{% endif %}</div>
+                        <div class="text-muted small">Cumplimiento ponderado medio</div>
                     </div>
                 </div>
             </div>
-            <p class="small text-muted mt-3 mb-0 px-2 pb-2">
-                <i class="bi bi-info-circle me-1" aria-hidden="true"></i>
-                Datos ficticios para presentación del diseño. No se obtienen de MySQL.
-            </p>
         </div>
     </div>
 </div>
+
+<!-- Seguimiento por funcionario y delegación -->
+{% include 'gestion/panel_seguimiento_dashboard.html' %}
 
 <!-- Accesos rápidos -->
 <div class="panel-card">
@@ -208,28 +215,28 @@
         <a href="{% url 'gestion:listar_actividades' %}" class="quick-card">
             <div class="quick-left">
                 <div class="quick-icon purple"><i class="bi bi-journal-text" aria-hidden="true"></i></div>
-                <div><strong>Actividades</strong><span>Consulta y registro demostrativo</span></div>
+                <div><strong>Actividades</strong><span>Registro y seguimiento de actividades</span></div>
             </div>
             <i class="bi bi-chevron-right" aria-hidden="true"></i>
         </a>
         <a href="{% url 'gestion:agenda_colectiva' %}" class="quick-card">
             <div class="quick-left">
                 <div class="quick-icon violet"><i class="bi bi-calendar-event" aria-hidden="true"></i></div>
-                <div><strong>Agenda colectiva</strong><span>Compromisos de demostración</span></div>
+                <div><strong>Agenda colectiva</strong><span>Compromisos y reuniones</span></div>
             </div>
             <i class="bi bi-chevron-right" aria-hidden="true"></i>
         </a>
         <a href="{% url 'gestion:indicadores' %}" class="quick-card">
             <div class="quick-left">
                 <div class="quick-icon rose"><i class="bi bi-bar-chart-fill" aria-hidden="true"></i></div>
-                <div><strong>Indicadores</strong><span>Metas y cumplimiento demostrativo</span></div>
+                <div><strong>Indicadores</strong><span>Metas y semáforos</span></div>
             </div>
             <i class="bi bi-chevron-right" aria-hidden="true"></i>
         </a>
         <a href="{% url 'gestion:informes_gestion' %}" class="quick-card">
             <div class="quick-left">
                 <div class="quick-icon blue"><i class="bi bi-file-earmark-bar-graph" aria-hidden="true"></i></div>
-                <div><strong>Informes</strong><span>Consulta demostrativa de resultados</span></div>
+                <div><strong>Informes</strong><span>Resultados e informes</span></div>
             </div>
             <i class="bi bi-chevron-right" aria-hidden="true"></i>
         </a>

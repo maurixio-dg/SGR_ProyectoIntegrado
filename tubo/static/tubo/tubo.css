@@ -1,0 +1,11 @@
+/* El Tubo usa la identidad global del SGR. Correcciones locales de legibilidad. */
+.tubo-dl dt {color: #45556c; font-weight: 600;}
+.tubo-dl dd {overflow-wrap: anywhere;}
+.tubo-form-card {max-width: 1120px; margin-inline: auto;}
+#tubo-tabla td {vertical-align: middle;}
+#tubo-tabla .table {min-width: 870px;}
+@media(max-width: 767px) {
+  .tubo-form-card {margin: 0;}
+  .tubo-dl dt {margin-top: .45rem;}
+  #tubo-tabla .table {min-width: 780px;}
+}

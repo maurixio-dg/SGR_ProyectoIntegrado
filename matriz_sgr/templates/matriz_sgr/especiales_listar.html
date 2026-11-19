@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}Mediciones especiales | Matriz SGR{% endblock %}
+{% block breadcrumb %}GESTIÓN OPERATIVA / MATRIZ SGR / MEDICIONES ESPECIALES{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+ <h2 class="mb-0">Mediciones especiales de la matriz</h2>
+ <a class="btn btn-outline-primary me-2" href="{% url 'matriz_sgr:valoraciones' %}">Felicitaciones y reclamos</a><a class="btn btn-outline-secondary" href="{% url 'matriz_sgr:catalogos' %}">Volver a la matriz</a>
+</div>
+<div class="panel-card p-3 mb-3">
+<form method="get" class="row g-3 align-items-end">
+ <div class="col-md-9"><label for="clase" class="form-label">Tipo de ítem</label>
+ <select id="clase" name="clase" class="form-select"><option value="">Todos</option>
+ <option value="PORC" {% if clase_actual == 'PORC' %}selected{% endif %}>Porcentuales</option>
+ <option value="DIN" {% if clase_actual == 'DIN' %}selected{% endif %}>Objetivo variable</option>
+ <option value="ESP" {% if clase_actual == 'ESP' %}selected{% endif %}>Felicitaciones y reclamos</option>
+ </select></div>
+ <div class="col-md-3"><button type="submit" class="btn btn-dark w-100">Filtrar</button></div>
+</form></div>
+<div class="panel-card p-3 mb-4"><h5>Mediciones configuradas</h5>
+<div class="table-responsive"><table class="table table-hover align-middle sgr-table">
+<thead><tr><th>Ítem</th><th>Delegación / período</th><th>Estado</th><th>Observado</th><th>Objetivo</th><th>Cumplimiento</th><th>Aporte</th><th></th></tr></thead>
+<tbody>{% for r in resultados %}<tr><td><strong>{{ r.medicion.item.nombre }}</strong><div class="small text-muted">{{ r.medicion.item.hoja }}</div></td>
+<td>{{ r.medicion.delegacion }}<div class="small text-muted">{{ r.medicion.periodo }}</div></td>
+<td>{{ r.medicion.get_estado_display }}</td>
+<td>{{ r.observado|default_if_none:'—' }}</td><td>{{ r.objetivo|default_if_none:'—' }}</td>
+<td>{% if r.cumplimiento is not None %}{{ r.cumplimiento }}%{% else %}—{% endif %}</td>
+<td>{{ r.aporte|default_if_none:'—' }}</td>
+<td><a class="btn btn-sm btn-outline-primary" href="{% url 'matriz_sgr:especial_editar' r.medicion.pk %}">Ver detalle</a></td>
+</tr>{% empty %}<tr><td colspan="8" class="text-muted py-3">Todavía no hay mediciones especiales configuradas.</td></tr>{% endfor %}</tbody>
+</table></div></div>
+<div class="panel-card p-3"><h5>Ítems especiales del Excel</h5>
+<div class="table-responsive"><table class="table table-hover align-middle sgr-table"><thead><tr><th>Hoja</th><th>Ítem</th><th>Clase</th><th>Objetivo del Excel</th><th>Ponderación</th><th></th></tr></thead><tbody>
+{% for item in items %}<tr>
+<td>{{ item.hoja }}</td><td>{{ item.nombre }}</td><td>{{ item.get_clase_display }}</td>
+<td>{% if item.meta_original is not None %}{{ item.meta_original }}{% else %}Variable{% endif %}</td>
+<td>{% if item.ponderacion is not None %}{{ item.ponderacion }}%{% else %}—{% endif %}</td>
+<td>{% if item.clase == 'PORC' or item.clase == 'DIN' %}
+<a class="btn btn-sm btn-outline-primary" href="{% url 'matriz_sgr:especial_crear' item.pk %}">Configurar medición</a>
+{% else %}<span class="text-muted">Regla pendiente</span>{% endif %}</td>
+</tr>{% empty %}<tr><td colspan="6">Sin ítems en esta clase.</td></tr>{% endfor %}
+</tbody></table></div></div>
+{% endblock %}

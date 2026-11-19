@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}Configurar medición especial | SGR{% endblock %}
+{% block breadcrumb %}GESTIÓN OPERATIVA / MATRIZ SGR / CONFIGURAR MEDICIÓN{% endblock %}
+{% block content %}
+<div class="mb-4"><h2>Configurar medición especial</h2><p class="text-muted mb-0">{{ item.hoja }} · {{ item.nombre }}</p></div>
+<div class="panel-card p-4" style="max-width:820px">
+<p><strong>Tipo:</strong> {{ item.get_clase_display }}. <strong>Ponderación:</strong> {{ item.ponderacion }}%.</p>
+{% if item.clase == 'PORC' %}<p class="text-muted">El objetivo porcentual procede del Excel: {{ item.meta_original }} (= 80% si el valor original es 0,8).</p>{% else %}<p class="text-muted">El Excel no fija un objetivo válido. Debe documentarse un objetivo del período antes de validar.</p>{% endif %}
+<form method="post" novalidate>{% csrf_token %}{{ form.non_field_errors }}
+<div class="row g-3">{% for field in form %}<div class="col-md-6"><label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+{{ field }}<div class="text-danger small">{{ field.errors }}</div></div>{% endfor %}</div>
+<div class="d-flex gap-2 mt-4"><button type="submit" class="btn btn-primary">Crear borrador</button>
+<a class="btn btn-outline-secondary" href="{% url 'matriz_sgr:especiales' %}">Cancelar</a></div></form>
+</div>{% endblock %}

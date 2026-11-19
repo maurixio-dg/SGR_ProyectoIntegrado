@@ -18,15 +18,11 @@ from .forms import PeriodoForm
 
 @login_required
 def dashboard(request):
-    contexto = {
-        "total_delegaciones": Delegacion.objects.count(),
-        "total_funcionarios": Funcionario.objects.count(),
-        "total_cargos": Cargo.objects.count(),
-        "total_actividades": 0,  # temporal mientras no exista el modelo Actividad
-    }
+    from .dashboard_eva3 import obtener_contexto_dashboard
+    contexto = obtener_contexto_dashboard(request.user)
+    from .dashboard_seguimiento import obtener_panel_seguimiento
+    contexto.update(obtener_panel_seguimiento(request.user, request.GET))
     return render(request, "dashboard.html", contexto)
-
-
 # ==========================================
 # CONTROL DE ACCESO A PERIODOS
 # ==========================================

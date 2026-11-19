@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block title %}Vincular gestión a meta | SGR{% endblock %}
+{% block breadcrumb %}GESTIÓN OPERATIVA / TUBO / METAS{% endblock %}
+{% block content %}
+<div class="module-heading">
+  <div><h2>Vincular gestión aprobada a una meta</h2><p>{{ gestion.codigo }} · {{ gestion.titulo }}</p></div>
+  <a class="btn btn-outline-secondary" href="{% url 'tubo:detalle_gestion' gestion.pk %}">Volver al detalle</a>
+</div>
+<section class="panel-card" style="max-width: 900px">
+  <div class="alert alert-info">El sistema utiliza el cálculo ya existente en <strong>Actividades e Indicadores</strong>. La gestión social no aporta puntos por sí sola: necesita una actividad aprobada y elegible.</div>
+  <div class="mb-3 small"><strong>Solicitante:</strong> {{ gestion.vecino.nombre }} · <strong>Responsable:</strong> {{ gestion.responsable.nombre }} · <strong>Estado:</strong> {{ gestion.get_estado_display }}</div>
+  <form method="post" novalidate>{% csrf_token %}
+    {% if formulario.non_field_errors %}<div class="alert alert-danger">{{ formulario.non_field_errors }}</div>{% endif %}
+    <fieldset class="mb-3">
+      <legend class="form-label fs-6">Forma de vinculación</legend>
+      {{ formulario.modo }}
+      {% for error in formulario.modo.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+    </fieldset>
+    <div class="mb-4">
+      <label class="form-label" for="{{ formulario.meta.id_for_label }}">{{ formulario.meta.label }}</label>
+      {{ formulario.meta }}
+      {% for error in formulario.meta.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+    </div>
+    <div id="tubo-modo-existente" class="mb-3">
+      <label class="form-label" for="{{ formulario.actividad_existente.id_for_label }}">{{ formulario.actividad_existente.label }}</label>
+      {{ formulario.actividad_existente }}
+      <div class="form-text">Si esta gestión ya fue registrada como Actividad, selecciónela aquí para impedir un doble registro.</div>
+      {% for error in formulario.actividad_existente.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+    </div>
+    <div id="tubo-modo-nueva">
+      <div class="mb-3">
+        <label class="form-label" for="{{ formulario.fecha_actividad.id_for_label }}">{{ formulario.fecha_actividad.label }}</label>
+        {{ formulario.fecha_actividad }}
+        {% for error in formulario.fecha_actividad.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="{{ formulario.accion_realizada.id_for_label }}">{{ formulario.accion_realizada.label }}</label>
+        {{ formulario.accion_realizada }}
+        <div class="form-text">Describa únicamente una acción realmente ejecutada; las coordinaciones preparatorias no ponderan.</div>
+        {% for error in formulario.accion_realizada.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+      </div>
+      <div class="form-check mb-3">
+        {{ formulario.confirmacion }} <label class="form-check-label" for="{{ formulario.confirmacion.id_for_label }}">{{ formulario.confirmacion.label }}</label>
+        {% for error in formulario.confirmacion.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+      </div>
+    </div>
+    <div class="alert alert-warning">Se comprobarán automáticamente la delegación, el responsable, el trimestre, el contacto del vecino, el máximo de siete acciones diarias y la fecha límite semanal. No se modificarán los registros aprobados del Tubo.</div>
+    <button type="submit" class="btn-muni">Confirmar vinculación</button>
+  </form>
+</section>
+<script>
+(function() {
+  const radios = document.querySelectorAll('input[name="modo"]');
+  const existente = document.getElementById('tubo-modo-existente');
+  const nueva = document.getElementById('tubo-modo-nueva');
+  function actualizar() {
+    const seleccionado = document.querySelector('input[name="modo"]:checked');
+    const esNueva = seleccionado && seleccionado.value === 'nueva';
+    existente.hidden = !!esNueva;
+    nueva.hidden = !esNueva;
+  }
+  radios.forEach(r => r.addEventListener('change', actualizar));
+  actualizar();
+})();
+</script>
+{% endblock %}
